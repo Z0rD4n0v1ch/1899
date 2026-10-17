@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miner 1899 — 2D-шахтёр в браузере</title>
+<meta name="description" content="Копай на 788 метров вглубь: четыре биома, руда, лавка, лестницы и подземные твари. Играется в браузере на компьютере и телефоне, ничего не нужно устанавливать.">
+<meta name="theme-color" content="#1A120C">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- Превью ссылки в Telegram, ВКонтакте и т.п.
+     Адрес картинки должен быть полным. Если переименуешь репозиторий — поправь адрес здесь. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Miner 1899">
+<meta property="og:description" content="2D-шахтёр в браузере: 788 метров вглубь, четыре биома, руда, лавка и подземные твари.">
+<meta property="og:image" content="https://z0rd4n0v1ch.github.io/1899.github.io/assets/og.jpg">
+<meta property="og:url" content="https://z0rd4n0v1ch.github.io/1899.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+    :root {
+        --bg: #1A120C;
+        --bg-deep: #140E09;
+        --text: #EDE4D8;
+        --muted: #A8957F;
+        --accent: #C8834A;
+        --accent-hover: #DE9A5E;
+        --line: #2E2318;
+        /* цвета камня четырёх биомов — те же, что в игре */
+        --sand: #8A7F6A;
+        --clay: #6F7C88;
+        --granite: #8C7473;
+        --basalt: #4A4440;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        font-size: 17px;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); }
+    a:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+
+    .wrap { max-width: 640px; margin: 0 auto; padding: 0 24px; }
+    .wide { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* --- первый экран --- */
+    .hero { padding: 72px 0 48px; text-align: center; }
+    .logo { width: 300px; max-width: 72%; height: auto; margin-bottom: 36px; }
+    .tagline { font-size: 1.15rem; margin-bottom: 8px; }
+    .subline { color: var(--muted); margin-bottom: 36px; }
+
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-block;
+        padding: 13px 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost { color: var(--text); border: 1px solid #4A3A2C; }
+    .btn-ghost:hover { border-color: var(--muted); }
+    .note { margin-top: 18px; font-size: 0.9rem; color: var(--muted); }
+
+    /* --- скриншоты --- */
+    figure { margin: 0; }
+    figure img { display: block; width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--line); }
+    figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--muted); text-align: center; }
+    .shot { padding: 8px 0 24px; }
+
+    /* --- секции --- */
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-size: 1.45rem; line-height: 1.3; margin-bottom: 18px; font-weight: 700; }
+    p + p { margin-top: 1em; }
+
+    /* --- шахта: разрез по глубине (главная иллюстрация страницы) --- */
+    .shaft { list-style: none; margin-top: 28px; }
+    .layer {
+        display: grid;
+        grid-template-columns: 72px 14px 1fr;
+        column-gap: 18px;
+    }
+    .depth {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        font-size: 0.9rem;
+        padding-top: 2px;
+    }
+    .rock { border-radius: 2px; }
+    .layer:first-child .rock { border-radius: 6px 6px 2px 2px; }
+    .layer:last-child .rock { border-radius: 2px 2px 6px 6px; }
+    .layer-body { padding: 0 0 30px; }
+    .layer-body h3 { font-size: 1.08rem; margin-bottom: 4px; }
+    .layer-body p { color: var(--muted); font-size: 0.97rem; }
+    .layer-body strong { color: var(--text); font-weight: 600; }
+    .bottom { display: grid; grid-template-columns: 72px 14px 1fr; column-gap: 18px; color: var(--muted); font-size: 0.9rem; }
+    .bottom span:first-child { text-align: right; }
+
+    /* --- списки возможностей --- */
+    .features { list-style: none; margin-top: 8px; }
+    .features li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .features li:last-child { border-bottom: none; }
+    .features b { display: block; margin-bottom: 2px; }
+    .features span { color: var(--muted); font-size: 0.97rem; }
+
+    /* --- управление --- */
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    kbd {
+        display: inline-block;
+        min-width: 1.6em;
+        padding: 0 6px;
+        border: 1px solid #4A3A2C;
+        border-bottom-width: 2px;
+        border-radius: 4px;
+        font: 600 0.85rem/1.6 ui-monospace, Menlo, Consolas, monospace;
+        text-align: center;
+        color: var(--text);
+        background: var(--bg-deep);
+    }
+
+    /* --- что нового --- */
+    .release { margin-top: 26px; }
+    .release h3 { font-size: 1.05rem; }
+    .release time { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 6px; }
+    .release ul { margin: 8px 0 0 20px; color: var(--muted); font-size: 0.97rem; }
+    .release li + li { margin-top: 4px; }
+
+    footer { padding: 48px 0 64px; border-top: 1px solid var(--line); text-align: center; font-size: 0.9rem; color: var(--muted); }
+
+    @media (max-width: 560px) {
+        body { font-size: 16px; }
+        .hero { padding: 48px 0 36px; }
+        .logo { width: 230px; margin-bottom: 28px; }
+        section { padding: 44px 0; }
+        .btn { flex: 1 1 100%; text-align: center; }
+        .layer, .bottom { grid-template-columns: 52px 10px 1fr; column-gap: 12px; }
+        /* на телефоне важнее колонка «Телефон» — компьютерную прячем */
+        th:nth-child(2), td:nth-child(2) { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+    <picture>
+        <source srcset="assets/logo.webp" type="image/webp">
+        <img src="assets/logo.png" alt="Miner 1899" class="logo" width="600" height="616">
+    </picture>
+    <p class="tagline">Копай вниз. Чем глубже — тем дороже руда и тем опаснее шахта.</p>
+    <p class="subline">2D-игра про шахтёра: 788 метров вглубь, четыре биома, лавка и подземные твари.</p>
+    <div class="actions">
+        <a href="play/" class="btn btn-primary">Играть</a>
+        <a href="#news" class="btn btn-ghost">Что нового</a>
+    </div>
+    <p class="note">Работает в браузере на компьютере и телефоне. Ничего не нужно устанавливать.</p>
+</header>
+
+<div class="wide shot">
+    <figure>
+        <img src="img/overview.webp" alt="Поверхность с лавкой скупщика и панелью игрока" width="1366" height="700" loading="lazy">
+        <figcaption>Поверхность: лавка скупщика и панель с рюкзаком, деньгами и инструментами.</figcaption>
+    </figure>
+</div>
+
+<section class="wrap">
+    <h2>Как это устроено</h2>
+    <p>
+        Начинаешь у лавки с ржавой киркой, десятью лестницами и пустым рюкзаком.
+        Копаешь вниз, собираешь руду, поднимаешься и продаёшь. На вырученные деньги —
+        кирка получше, лопата, рюкзак побольше, лампа, бинты. И снова вниз, глубже.
+    </p>
+    <p>
+        Каждый мир новый: 120 × 800 блоков создаются заново при каждой игре.
+        Игра сохраняется сама, можно держать три своих сохранения и переносить их файлом.
+    </p>
+</section>
+
+<section class="wrap">
+    <h2>Шахта в разрезе</h2>
+    <p>У каждого пласта свой камень, своя руда и своя опасность. Чем ниже, тем твёрже порода.</p>
+    <ol class="shaft">
+        <li class="layer">
+            <span class="depth">0 м</span>
+            <span class="rock" style="background: var(--sand)"></span>
+            <div class="layer-body">
+                <h3>Песчаный пласт</h3>
+                <p>Песок, золото и <strong>уголь</strong> — дешёвый, но его много. Здесь живут крысы: догонят — утащат руду из рюкзака.</p>
+            </div>
+        </li>
+        <li class="layer">
+            <span class="depth">200 м</span>
+            <span class="rock" style="background: var(--clay)"></span>
+            <div class="layer-body">
+                <h3>Глиняные штольни</h3>
+                <p>Глина и <strong>серебро</strong>, а примерно с 360 м — первые алмазы. После копания трещит потолок, на потолке пещер спят летучие мыши.</p>
+            </div>
+        </li>
+        <li class="layer">
+            <span class="depth">400 м</span>
+            <span class="rock" style="background: var(--granite)"></span>
+            <div class="layer-body">
+                <h3>Гранитные недра</h3>
+                <p>Гравий, алмазы и <strong>изумруды</strong>. В граните прячутся карманы рудничного газа, в углах — пауки с паутиной. С 440 м встречается лава.</p>
+            </div>
+        </li>
+        <li class="layer">
+            <span class="depth">600 м</span>
+            <span class="rock" style="background: var(--basalt)"></span>
+            <div class="layer-body">
+                <h3>Огненное дно</h3>
+                <p>Базальт, рубины и <strong>платина</strong> — самая дорогая руда. Жарко, здоровье тает, а из лавы плюются огнём саламандры.</p>
+            </div>
+        </li>
+    </ol>
+    <div class="bottom"><span>788 м</span><span></span><span>Дно шахты: дальше только неразрушимая порода.</span></div>
+</section>
+
+<div class="wide shot">
+    <figure>
+        <img src="img/biomes.webp" alt="Четыре биома шахты" width="830" height="624" loading="lazy">
+        <figcaption>Четыре пласта — при входе в каждый появляется табличка с его рудой и опасностями.</figcaption>
+    </figure>
+</div>
+
+<section class="wrap">
+    <h2>Что тебя ждёт</h2>
+    <ul class="features">
+        <li><b>Лавка скупщика</b><span>Подошёл — руда продана. Здесь же кирки, лопаты, рюкзаки, снаряжение и лечение. Нет денег на лопату — дадут в долг, но вернуть придётся вдвое.</span></li>
+        <li><b>Лестницы, верёвка и клеть</b><span>Из глубокой шахты просто так не выпрыгнуть. Строй лестницу, спускай верёвку в колодец или вызывай клеть — она поднимет к лавке за деньги.</span></li>
+        <li><b>Рюкзак с умом</b><span>Места мало: когда он полон, дешёвая руда сама уступает место дорогой. А тяжёлое золото и платина замедляют шаг.</span></li>
+        <li><b>Подземные твари</b><span>Крысы-воришки, летучие мыши, пауки и саламандры. Их можно бить киркой, а лампа отпугивает мышей и пауков.</span></li>
+        <li><b>Канарейка</b><span>Как у настоящих шахтёров: тревожится, если рядом рудничный газ.</span></li>
+        <li><b>Радио</b><span>Восемь онлайн-станций прямо в игре. Выключено по умолчанию и подключается к станции, только когда включишь сам.</span></li>
+    </ul>
+</section>
+
+<div class="wide shot">
+    <figure>
+        <img src="img/creatures.webp" alt="Крыса, летучие мыши, паук и саламандра" width="1128" height="720" loading="lazy">
+        <figcaption>Крыса с украденным золотом, летучие мыши, паук в свете лампы, саламандра в лаве.</figcaption>
+    </figure>
+</div>
+
+<section class="wrap">
+    <h2>Управление</h2>
+    <table>
+        <thead><tr><th>Что делать</th><th>Компьютер</th><th>Телефон</th></tr></thead>
+        <tbody>
+            <tr><td>Ходить, лазать</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> или стрелки</td><td>крестовина</td></tr>
+            <tr><td>Копать, бить</td><td><kbd>Пробел</kbd> (держать), вниз — с <kbd>S</kbd></td><td>⛏, вниз — вместе с ▼</td></tr>
+            <tr><td>Бежать</td><td><kbd>Shift</kbd></td><td>«Бег»</td></tr>
+            <tr><td>Лавка</td><td><kbd>E</kbd> у лавки</td><td>«Лавка»</td></tr>
+            <tr><td>Лестница, верёвка</td><td><kbd>Q</kbd>, <kbd>R</kbd></td><td>«Лестн.», «Верёв.»</td></tr>
+            <tr><td>Лечиться, клеть</td><td><kbd>H</kbd>, <kbd>C</kbd></td><td>«Лечить», «Клеть»</td></tr>
+            <tr><td>Радио</td><td><kbd>M</kbd></td><td>«Радио»</td></tr>
+            <tr><td>Сохранения</td><td><kbd>Esc</kbd></td><td>☰</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<div class="wrap shot">
+    <figure>
+        <img src="img/mobile.webp" alt="Игра на телефоне вертикально и горизонтально" width="1546" height="844" loading="lazy">
+        <figcaption>На телефоне кнопки появляются сами. Вертикально поле выше — шахту видно глубже.</figcaption>
+    </figure>
+</div>
+
+<section class="wrap" id="news">
+    <h2>Что нового</h2>
+    <div class="release">
+        <h3>1.6.1<time datetime="2026-10-17">17 октября 2026</time></h3>
+        <ul>
+            <li>Клавиши больше не залипают после переключения окна.</li>
+            <li>Игра сохраняется при закрытии вкладки и сворачивании браузера.</li>
+            <li>Повреждённый файл сохранения не портит текущую игру.</li>
+            <li>Уведомления складываются стопкой и не закрывают друг друга.</li>
+        </ul>
+    </div>
+    <div class="release">
+        <h3>1.6.0<time datetime="2026-10-17">17 октября 2026</time></h3>
+        <ul>
+            <li>Лестницы, верёвка и клеть — чтобы выбираться из глубины.</li>
+            <li>Подземные твари, лампа и канарейка.</li>
+            <li>Рюкзаки побольше, вес руды, умная замена дешёвой руды.</li>
+            <li>Бинты, аптечки и стальная лопата.</li>
+            <li>Игра на телефонах и планшетах, радио.</li>
+        </ul>
+    </div>
+    <div class="release">
+        <h3>1.5.0<time datetime="2026-10-17">17 октября 2026</time></h3>
+        <ul>
+            <li>Четыре биома со своим камнем, рудой и опасностями.</li>
+            <li>Здоровье, лопата и мягкая порода, бег, долг в лавке.</li>
+        </ul>
+    </div>
+</section>
+
+<footer class="wrap">
+    Miner 1899 · 2026
+</footer>
+
+</body>
+</html>
