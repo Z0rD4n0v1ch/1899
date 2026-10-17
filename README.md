@@ -1,4 +1,4 @@
-# Сайт Miner 1899
+# Сайт игры Miner 1899
 
 Страница игры и сама игра. Публикуется на GitHub Pages:
 **https://z0rd4n0v1ch.github.io/1899/**
