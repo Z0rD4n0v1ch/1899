@@ -1,7 +1,8 @@
 # Сайт игры Miner 1899
 
-Страница игры и сама игра. Публикуется на GitHub Pages:
-**https://z0rd4n0v1ch.github.io/1899/**
+Страница игры и сама игра. Код игры — в репозитории [miner-1899](https://github.com/Z0rD4n0v1ch/miner-1899).
+Публикуется на GitHub Pages:
+**https://z0rd4n0v1ch.github.io/1899.github.io/**
 
 ## Что где лежит
 

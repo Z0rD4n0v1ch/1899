@@ -14,8 +14,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Miner 1899">
 <meta property="og:description" content="2D-шахтёр в браузере: 788 метров вглубь, четыре биома, руда, лавка и подземные твари.">
-<meta property="og:image" content="https://z0rd4n0v1ch.github.io/1899/assets/og.jpg">
-<meta property="og:url" content="https://z0rd4n0v1ch.github.io/1899/">
+<meta property="og:image" content="https://z0rd4n0v1ch.github.io/1899.github.io/assets/og.jpg">
+<meta property="og:url" content="https://z0rd4n0v1ch.github.io/1899.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 
 <style>
@@ -142,6 +142,10 @@
     .release ul { margin: 8px 0 0 20px; color: var(--muted); font-size: 0.97rem; }
     .release li + li { margin-top: 4px; }
 
+    .more { margin-top: 26px; }
+    .links { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+    .links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .links a:hover { color: var(--accent); }
     footer { padding: 48px 0 64px; border-top: 1px solid var(--line); text-align: center; font-size: 0.9rem; color: var(--muted); }
 
     @media (max-width: 560px) {
@@ -168,6 +172,7 @@
     <div class="actions">
         <a href="play/" class="btn btn-primary">Играть</a>
         <a href="#news" class="btn btn-ghost">Что нового</a>
+        <a href="https://github.com/Z0rD4n0v1ch/miner-1899" class="btn btn-ghost">GitHub</a>
     </div>
     <p class="note">Работает в браузере на компьютере и телефоне. Ничего не нужно устанавливать.</p>
 </header>
@@ -310,10 +315,16 @@
             <li>Здоровье, лопата и мягкая порода, бег, долг в лавке.</li>
         </ul>
     </div>
+    <p class="more"><a href="https://github.com/Z0rD4n0v1ch/miner-1899/blob/main/CHANGELOG.md">Полная история версий</a></p>
 </section>
 
 <footer class="wrap">
-    Miner 1899 · 2026
+    <nav class="links" aria-label="Ссылки проекта">
+        <a href="https://github.com/Z0rD4n0v1ch/miner-1899">Исходный код</a>
+        <a href="https://github.com/Z0rD4n0v1ch/miner-1899/blob/main/CHANGELOG.md">История версий</a>
+        <a href="https://github.com/Z0rD4n0v1ch/miner-1899/blob/main/LICENSE">Лицензия MIT</a>
+    </nav>
+    <p>Miner 1899 · 2026</p>
 </footer>
 
 </body>
