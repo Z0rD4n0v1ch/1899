@@ -128,7 +128,118 @@
         }
 
         /* Радио */
+        #leftPanel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 806px;
+        }
+
+        #leftPanel > div {
+            margin-top: 0;
+        }
+
+        /* панель радио скрыта, пока её не открыли клавишей M */
         #radioPanel {
+            display: none;
+        }
+
+        #radioPanel.open {
+            display: block;
+        }
+
+        .radio-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .radio-x {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .radio-manage {
+            margin-top: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .radio-manage summary {
+            cursor: pointer;
+            color: #ffa500;
+            margin-bottom: 6px;
+        }
+
+        #radioList {
+            list-style: none;
+            margin-bottom: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        #radioList li {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        #radioList li.radio-empty {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .radio-pick {
+            flex: 1;
+            text-align: left;
+            background: #1a1a1a;
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font: 13px 'Courier New', monospace;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #radioList li.current .radio-pick {
+            border-color: #ffa500;
+            color: #ffa500;
+        }
+
+        .radio-del {
+            background: #1a1a1a;
+            color: #ff6b6b;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 0 8px;
+            cursor: pointer;
+        }
+
+        .radio-manage input[type="text"],
+        .radio-manage input[type="url"] {
+            width: 100%;
+            margin-bottom: 6px;
+            padding: 6px 8px;
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font: 13px 'Courier New', monospace;
+        }
+
+        .radio-note.error {
+            color: #ff6b6b;
+        }
+
+        #radioPanel.open {
             padding: 12px 15px;
             background: #2a2a2a;
             border: 2px solid #444;
@@ -173,6 +284,7 @@
 
         .radio-volume input {
             flex: 1;
+            min-width: 0;
             accent-color: #ffa500;
         }
 
@@ -367,6 +479,54 @@
             font-size: 12px;
         }
 
+        /* настройки */
+        .setting {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .setting-label {
+            color: #ffa500;
+            margin-bottom: 8px;
+        }
+
+        .setting-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .setting-options .btn {
+            margin: 0;
+            padding: 8px 6px;
+            font-size: 12px;
+        }
+
+        .setting-options .btn.chosen {
+            background: #ffa500;
+            color: #000;
+        }
+
+        .setting-check {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .setting-check input {
+            margin-top: 3px;
+            accent-color: #ffa500;
+        }
+
+        .setting-note {
+            color: #888;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -501,6 +661,11 @@
             transform: none;
         }
         /* Широкий экран: идёт последним, чтобы перекрывать правила выше */
+        /* узкий экран: сначала игра, потом сохранения и радио, потом статистика */
+        #gameCanvas { order: 0; }
+        #leftPanel { order: 1; }
+        #sidebar { order: 2; }
+
         @media (min-width: 1100px) {
             #layout {
                 flex-direction: row;
@@ -508,10 +673,30 @@
                 align-items: flex-start;
             }
 
+            /* широкий экран: слева сохранения и радио, в центре игра, справа статистика */
+            #leftPanel { order: 0; width: 200px; flex-shrink: 0; max-height: calc(100vh - 80px); overflow-y: auto; }
+            /* настройка «поменять панели местами» */
+            body.swap-panels #leftPanel { order: 2; }
+            body.swap-panels #sidebar { order: 0; }
+            #gameCanvas { order: 1; }
+            #sidebar { order: 2; }
+
+            #leftPanel #savePanel {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            #leftPanel #savePanel .btn {
+                margin: 0;
+                width: 100%;
+            }
+
             /* на большом мониторе холст растягивается на всю высоту окна,
                но оставляет место под панель справа */
             #gameCanvas {
-                height: min(calc(100vh - 80px), calc((100vw - 400px) * 0.75), 1200px);
+                height: min(calc(100vh - 80px), calc((100vw - 620px) * 0.75), 1200px);
                 width: auto;
                 max-width: none;
                 max-height: none;
@@ -595,6 +780,16 @@
             font-size: 13px;
         }
 
+        /* в полях ввода (станция радио, имя сохранения) текст должен выделяться и
+           печататься — иначе на iPhone в них нельзя ничего ввести */
+        body.touch input,
+        body.touch textarea {
+            -webkit-user-select: text;
+            user-select: text;
+            touch-action: manipulation;
+            font-size: 16px;   /* меньше 16px — iPhone приближает страницу при вводе */
+        }
+
         body.touch h1 {
             display: none;
         }
@@ -634,6 +829,27 @@
             overflow-y: auto;
             padding: 12px;
             background: rgba(20, 20, 20, 0.97);
+        }
+
+        /* телефон: панель слева не видна; сохранения — в меню ☰ (переносятся туда при
+           включении сенсорного режима), радио — плавающая панель поверх игры */
+        body.touch .radio-open-btn {
+            display: none;
+        }
+
+        body.touch #leftPanel {
+            width: 0;
+            height: 0;
+        }
+
+        body.touch #radioPanel.open {
+            position: fixed;
+            top: calc(44px + env(safe-area-inset-top, 0px));
+            left: 8px;
+            width: min(340px, calc(100vw - 16px));
+            max-height: calc(100vh - 260px);
+            overflow-y: auto;
+            z-index: 850;
         }
 
         body.touch.menu-open #menuClose {
@@ -711,8 +927,48 @@
     </style>
 </head>
 <body>
-    <h1>⛏️ Miner 1899 <span style="font-size:14px;color:#888;font-weight:normal">v1.6.1</span></h1>
+    <h1>⛏️ Miner 1899 <span style="font-size:14px;color:#888;font-weight:normal">v1.7.0</span></h1>
     <div id="layout">
+    <!-- Слева: сохранения и радио (радио открывается клавишей M) -->
+    <aside id="leftPanel">
+    <div id="savePanel">
+        <button class="btn" onclick="saveGame()">💾 Сохранить</button>
+        <button class="btn" onclick="loadGame()">📂 Загрузить</button>
+        <button class="btn btn-secondary" onclick="exportSave()">⬇️ Экспорт</button>
+        <button class="btn btn-secondary" onclick="importSave()">⬆️ Импорт</button>
+        <button class="btn btn-danger" onclick="newGame()">🆕 Новая игра</button>
+        <button class="btn btn-secondary radio-open-btn" onclick="radioPanelToggle()">📻 Радио (M)</button>
+        <button class="btn btn-secondary" onclick="openSettings()">⚙️ Настройки</button>
+    </div>
+
+    <div id="radioPanel">
+        <div class="radio-head">
+            <span class="stat-label">Радио (M)</span>
+            <button class="radio-x" onclick="radioPanelToggle(false)" aria-label="Скрыть радио">✕</button>
+        </div>
+        <div id="radioStation">Станций нет</div>
+        <div id="radioStatus">добавь станцию в «Мои станции»</div>
+        <div class="radio-buttons">
+            <button class="btn btn-secondary" onclick="radioSwitch(-1)" aria-label="Предыдущая станция">◀</button>
+            <button class="btn" id="radioToggle" onclick="radioToggle()">▶ Вкл</button>
+            <button class="btn btn-secondary" onclick="radioSwitch(1)" aria-label="Следующая станция">▶</button>
+        </div>
+        <label class="radio-volume">Громк.
+            <input type="range" id="radioVolume" min="0" max="100" step="1" value="60" oninput="radioSetVolume(this.value)">
+        </label>
+        <details class="radio-manage">
+            <summary>Мои станции</summary>
+            <ul id="radioList"></ul>
+            <input type="text" id="radioName" placeholder="Название" maxlength="40" autocomplete="off">
+            <input type="url" id="radioUrl" placeholder="https://… адрес потока" maxlength="500" autocomplete="off">
+            <button class="btn btn-small" onclick="radioAddFromForm()">Добавить</button>
+            <div id="radioFormMsg" class="radio-note"></div>
+            <div class="radio-note">Адрес потока обычно есть на сайте станции, в разделе «слушать в плеере» (ссылка на .mp3, .aac или поток).</div>
+        </details>
+        <div class="radio-note">Подключается к станции только когда включено</div>
+    </div>
+    </aside>
+
     <canvas id="gameCanvas" width="800" height="600"></canvas>
 
     <aside id="sidebar">
@@ -757,7 +1013,7 @@
         </div>
         <div class="stat">
             <div class="stat-label">Лестницы</div>
-            <div class="stat-value" id="ladders">5</div>
+            <div class="stat-value" id="ladders">10</div>
         </div>
         <div class="stat">
             <div class="stat-label">Верёвки</div>
@@ -773,40 +1029,19 @@
         </div>
     </div>
 
-    <div id="savePanel">
-        <button class="btn" onclick="saveGame()">💾 Сохранить</button>
-        <button class="btn" onclick="loadGame()">📂 Загрузить</button>
-        <button class="btn btn-secondary" onclick="exportSave()">⬇️ Экспорт</button>
-        <button class="btn btn-secondary" onclick="importSave()">⬆️ Импорт</button>
-        <button class="btn btn-danger" onclick="newGame()">🆕 Новая игра</button>
-    </div>
-
-    <div id="radioPanel">
-        <div class="stat-label">Радио (M)</div>
-        <div id="radioStation">Ретро FM</div>
-        <div id="radioStatus">выключено</div>
-        <div class="radio-buttons">
-            <button class="btn btn-secondary" onclick="radioSwitch(-1)" aria-label="Предыдущая станция">◀</button>
-            <button class="btn" id="radioToggle" onclick="radioToggle()">▶ Вкл</button>
-            <button class="btn btn-secondary" onclick="radioSwitch(1)" aria-label="Следующая станция">▶</button>
-        </div>
-        <label class="radio-volume">Громк.
-            <input type="range" id="radioVolume" min="0" max="100" step="1" value="60" oninput="radioSetVolume(this.value)">
-        </label>
-        <div class="radio-note">Подключается к станции только когда включено</div>
-    </div>
-
     <div id="controls">
         <p><span class="key">WASD</span> или <span class="key">←↑→↓</span> - Движение</p>
         <p><span class="key">Shift</span> - Бег</p>
-        <p><span class="key">Пробел</span> (удерживать) - Копать блок перед собой</p>
+        <p><span class="key">Пробел</span> (удерживать) - Копать блок перед собой; с <span class="key">S</span> — вниз, с <span class="key">W</span> — вверх (над головой и вверх-вперёд: так вырубаются ступеньки, на них запрыгиваешь)</p>
         <p><span class="key">E</span> (<span class="key">У</span>) у лавки - Купить инструменты</p>
         <p><span class="key">Q</span> (<span class="key">Й</span>) - Поставить лестницу, <span class="key">W</span>/<span class="key">S</span> - лезть</p>
         <p><span class="key">R</span> (<span class="key">К</span>) - Спустить верёвку в колодец перед собой</p>
+        <p><span class="key">T</span> (<span class="key">Е</span>) - Натянуть верёвку-переправу через пропасть или лаву</p>
         <p><span class="key">C</span> (<span class="key">С</span>) - Клеть: платный подъём наверх</p>
         <p><span class="key">H</span> (<span class="key">Р</span>) - Лечиться: бинт или аптечка</p>
-        <p><span class="key">M</span> (<span class="key">Ь</span>) - Радио: включить или выключить</p>
+        <p><span class="key">M</span> (<span class="key">Ь</span>) - Радио: показать или скрыть панель (станции добавляешь сам)</p>
         <p><span class="key">ESC</span> - Меню сохранений</p>
+        <p>⚙️ «Настройки» на панели сохранений: где показывать уведомления, поменять панели местами</p>
         <p id="debugHelp" style="display: none;"><span class="key">`</span> (<span class="key">Ё</span>) - Режим отладки</p>
         <p>Руда складывается в рюкзак. Продать её можно в лавке на поверхности — просто подойди к ней. Полный рюкзак сам выбросит дешёвую руду ради дорогой. Тяжёлый груз (золото, платина) замедляет.</p>
         <p>Алмазы и изумруды поддаются только железной кирке, рубины и платина — стальной.</p>
@@ -916,6 +1151,7 @@
             <button class="tbtn big" id="tRight" data-key="KeyD" data-hold>▶</button>
             <button class="tbtn big" id="tDown" data-key="KeyS" data-hold>▼</button>
             <button class="tbtn" data-toggle="ShiftLeft" style="grid-column: 1; grid-row: 3;">Бег</button>
+            <button class="tbtn" data-key="KeyT" style="grid-column: 3; grid-row: 3;">Перепр.</button>
             <button class="tbtn" data-menu style="grid-column: 1; grid-row: 1;">☰</button>
             <button class="tbtn" data-key="KeyM" id="tRadio" style="grid-column: 3; grid-row: 1;">Радио</button>
         </div>
@@ -926,6 +1162,35 @@
             <button class="tbtn" data-key="KeyH" style="grid-column: 1; grid-row: 2;">Лечить</button>
             <button class="tbtn" data-key="KeyC" style="grid-column: 1; grid-row: 3;">Клеть</button>
             <button class="tbtn" id="tDig" data-key="Space" data-hold>⛏</button>
+        </div>
+    </div>
+
+    <!-- Настройки -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">⚙️ Настройки</div>
+            <div class="setting">
+                <div class="setting-label">Где показывать уведомления</div>
+                <div class="setting-options" id="notifyOptions">
+                    <button class="btn btn-secondary" data-notify="top-right" onclick="setNotifyPosition('top-right')">↗ справа сверху</button>
+                    <button class="btn btn-secondary" data-notify="top-left" onclick="setNotifyPosition('top-left')">↖ слева сверху</button>
+                    <button class="btn btn-secondary" data-notify="top-center" onclick="setNotifyPosition('top-center')">↑ сверху по центру</button>
+                    <button class="btn btn-secondary" data-notify="bottom-right" onclick="setNotifyPosition('bottom-right')">↘ справа снизу</button>
+                    <button class="btn btn-secondary" data-notify="bottom-left" onclick="setNotifyPosition('bottom-left')">↙ слева снизу</button>
+                    <button class="btn btn-secondary" data-notify="bottom-center" onclick="setNotifyPosition('bottom-center')">↓ снизу по центру</button>
+                </div>
+                <button class="btn btn-small btn-secondary" onclick="showNotification('🔔 Так будут выглядеть уведомления')">Показать пример</button>
+            </div>
+            <div class="setting">
+                <label class="setting-check">
+                    <input type="checkbox" id="swapPanels" onchange="setSwapPanels(this.checked)">
+                    Поменять панели местами: статистика — слева, сохранения, радио и настройки — справа
+                </label>
+                <div class="setting-note">Для широкого экрана. На узком экране и на телефоне панели не по бокам, и эта настройка не действует.</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeSettings()">Готово</button>
+            </div>
         </div>
     </div>
 
@@ -994,8 +1259,8 @@
             VIEWPORT_HEIGHT = Math.floor(canvas.height / TILE_SIZE);
             if (typeof updateCamera === 'function' && world.length) updateCamera();
         }
-        const SAVE_VERSION = 6;          // 2: размеры мира; 3: рюкзак и деньги; 4: кирка; 5: лопата; 6: лестницы и верёвки
-        const GAME_VERSION = '1.6.1';
+        const SAVE_VERSION = 7;          // 2: размеры мира; 3: рюкзак и деньги; 4: кирка; 5: лопата; 6: лестницы и верёвки; 7: лампы, пояс
+        const GAME_VERSION = '1.7.0';
         const AUTOSAVE_INTERVAL = 30000; // 30 секунд
 
         // Физика игрока. Скорости — в блоках в секунду, ускорения — в блоках/с².
@@ -1009,6 +1274,11 @@
         const PLAYER_W = 0.9;     // ширина хитбокса, высота — 1 блок
         const EPS = 1e-6;
         const PHYSICS_STEP = 1 / 120;  // самый длинный шаг физики, секунды
+        // Падение с высоты: до SAFE_FALL блоков безопасно, дальше — урон за каждый блок.
+        // Открытая лампа от такого падения гаснет.
+        const SAFE_FALL = 6;
+        const FALL_DAMAGE_PER_BLOCK = 6;
+        let fallTop = null;    // самая высокая точка текущего полёта (y), null — на земле
 
         // Цвет пустоты под землёй: пещеры не должны выглядеть как небо
         // (у каждого биома свой, это цвет по умолчанию)
@@ -1047,7 +1317,8 @@
             GAS: 15,         // газовый карман внутри гранита: выглядит как камень
             LADDER: 16,      // лестница: сквозь неё можно идти, по ней — лазать
             ROPE: 17,        // верёвка: то же, но спускается сразу на весь колодец
-            WEB: 18          // паутина: сквозь неё можно пройти, но очень медленно
+            WEB: 18,         // паутина: сквозь неё можно пройти, но очень медленно
+            BRIDGE: 19       // верёвочная переправа: по ней ходят, S — спрыгнуть вниз
         };
 
         // Цвета блоков
@@ -1070,7 +1341,8 @@
             [BLOCK_TYPES.GAS]: '#8C7473',
             [BLOCK_TYPES.LADDER]: '#A0703C',
             [BLOCK_TYPES.ROPE]: '#C8A165',
-            [BLOCK_TYPES.WEB]: '#E8E8E8'
+            [BLOCK_TYPES.WEB]: '#E8E8E8',
+            [BLOCK_TYPES.BRIDGE]: '#C8A165'
         };
 
         // Мягкая порода: её быстро копает лопата, а кирка — с трудом.
@@ -1092,22 +1364,24 @@
         // Руда: что кладётся в рюкзак и почём продаётся
         const ORES = {
             // weight — вес одной штуки: золото и платина тяжёлые, камни лёгкие
-            [BLOCK_TYPES.GOLD]:    { key: 'gold',    name: 'Золото', price: 10,  score: 10,  weight: 2 },
-            [BLOCK_TYPES.DIAMOND]: { key: 'diamond', name: 'Алмаз',  price: 50,  score: 50,  weight: 0.5 },
-            [BLOCK_TYPES.RUBY]:    { key: 'ruby',    name: 'Рубин',  price: 100, score: 100, weight: 0.5 },
+            [BLOCK_TYPES.GOLD]:    { key: 'gold',    name: 'Золото', price: 8,   score: 10,  weight: 2 },
+            [BLOCK_TYPES.DIAMOND]: { key: 'diamond', name: 'Алмаз',  price: 30,  score: 50,  weight: 0.5 },
+            [BLOCK_TYPES.RUBY]:    { key: 'ruby',    name: 'Рубин',  price: 55,  score: 100, weight: 0.5 },
             // особая руда биомов
-            [BLOCK_TYPES.COAL]:     { key: 'coal',     name: 'Уголь',   price: 5,   score: 5,   weight: 1 },
-            [BLOCK_TYPES.SILVER]:   { key: 'silver',   name: 'Серебро', price: 25,  score: 25,  weight: 1.5 },
-            [BLOCK_TYPES.EMERALD]:  { key: 'emerald',  name: 'Изумруд', price: 75,  score: 75,  weight: 0.5 },
-            [BLOCK_TYPES.PLATINUM]: { key: 'platinum', name: 'Платина', price: 150, score: 150, weight: 3 }
+            [BLOCK_TYPES.COAL]:     { key: 'coal',     name: 'Уголь',   price: 4,   score: 5,   weight: 1 },
+            [BLOCK_TYPES.SILVER]:   { key: 'silver',   name: 'Серебро', price: 15,  score: 25,  weight: 1.5 },
+            [BLOCK_TYPES.EMERALD]:  { key: 'emerald',  name: 'Изумруд', price: 35,  score: 75,  weight: 0.5 },
+            [BLOCK_TYPES.PLATINUM]: { key: 'platinum', name: 'Платина', price: 80,  score: 150, weight: 3 }
         };
         const BACKPACK_CAPACITY = 20;    // ёмкость стартового мешка
 
         // Рюкзаки: покупаются в лавке, каждый следующий вместительнее
         const BACKPACKS = [
-            { name: 'Холщовый мешок',   capacity: 20, price: 0 },
-            { name: 'Кожаный ранец',    capacity: 35, price: 150 },
-            { name: 'Шахтёрский короб', capacity: 50, price: 500 }
+            // ранец на застёжках — крысы не воруют; короб жёсткий — груз в нём меньше
+            // замедляет, а при смерти половина руды сохраняется
+            { name: 'Холщовый мешок',   capacity: 20, price: 0,   ratProof: false, keepOnDeath: 0,   weightMult: 1 },
+            { name: 'Кожаный ранец',    capacity: 35, price: 200, ratProof: true,  keepOnDeath: 0,   weightMult: 1 },
+            { name: 'Шахтёрский короб', capacity: 50, price: 700, ratProof: true,  keepOnDeath: 0.5, weightMult: 0.7 }
         ];
 
         // Вес замедляет: при полной нагрузке ходьба и лазанье −35%, прыжок −15%
@@ -1133,16 +1407,16 @@
         // Кирки. speed делит время копания, minTier у блока — какая кирка нужна.
         const PICKAXES = [
             { name: 'Ржавая',            speed: 1,   price: 0 },
-            { name: 'Железная',          speed: 1.7, price: 100 },
-            { name: 'Стальная',          speed: 2.8, price: 400 },
-            { name: 'С алмазным жалом',  speed: 4.5, price: 1200 }
+            { name: 'Железная',          speed: 1.7, price: 150 },
+            { name: 'Стальная',          speed: 2.8, price: 900 },
+            { name: 'С алмазным жалом',  speed: 4.5, price: 2500 }
         ];
         // Лопаты: копают только мягкую породу. Номер 0 — лопаты нет.
         const SHOVELS = [
             { name: 'Нет',    speed: 0, price: 0 },
             { name: 'Лопата', speed: 1, price: 40 },
             // стальная копает мягкую породу быстрее даже лучшей кирки
-            { name: 'Стальная лопата', speed: 2.5, price: 250 }
+            { name: 'Стальная лопата', speed: 2.5, price: 300 }
         ];
 
         // Лопату можно взять в долг, если не хватает денег. Вернуть придётся вдвое больше:
@@ -1290,6 +1564,8 @@
             softScale: 0.07,  softThreshold: 0.63,  softMixScale: 0.05,
             // особая руда биома: жилы только в своём биоме
             specialScale: 0.22, specialThreshold: { COAL: 0.82, SILVER: 0.89, EMERALD: 0.915, PLATINUM: 0.92 },
+            // ценная руда — не у самой границы биома, а глубже внутри (м)
+            specialFrom: { COAL: 20, SILVER: 250, EMERALD: 470, PLATINUM: 670 },
             // газовые карманы в камне Гранитных недр
             gasScale: 0.3, gasThreshold: 0.88
         };
@@ -1342,7 +1618,7 @@
 
                     // особая руда своего биома — граница та же, что у цвета камня
                     const special = BIOMES[biomeAtBlock(x, y)].ore;
-                    if (specialNoise(x, y) > GEN.specialThreshold[special]) {
+                    if (y - DEPTH_ORIGIN >= GEN.specialFrom[special] && specialNoise(x, y) > GEN.specialThreshold[special]) {
                         row[x] = BLOCK_TYPES[special]; continue;
                     }
 
@@ -1425,11 +1701,12 @@
         function isBlocked(x, y) {
             const block = getBlock(x, y);
             return block !== BLOCK_TYPES.AIR && block !== BLOCK_TYPES.LAVA &&
-                   block !== BLOCK_TYPES.LADDER && block !== BLOCK_TYPES.ROPE && block !== BLOCK_TYPES.WEB;
+                   block !== BLOCK_TYPES.LADDER && block !== BLOCK_TYPES.ROPE && block !== BLOCK_TYPES.WEB &&
+                   block !== BLOCK_TYPES.BRIDGE;
         }
 
         function isClimbable(block) {
-            return block === BLOCK_TYPES.LADDER || block === BLOCK_TYPES.ROPE;
+            return block === BLOCK_TYPES.LADDER || block === BLOCK_TYPES.ROPE || block === BLOCK_TYPES.BRIDGE;
         }
 
         // ============ РЕЖИМ ОТЛАДКИ ============
@@ -1472,10 +1749,12 @@
             if (d === 0) {
                 // на поверхность: встать на землю, а не вырубать в ней яму
                 player.y = SURFACE_Y - 1;
+                fallTop = null;
                 showNotification('🧭 Отладка: поверхность');
                 return 0;
             }
             player.y = DEPTH_ORIGIN + d;
+            fallTop = null;
             const y = Math.floor(player.y);
             const x0 = Math.floor(player.x);
             const x1 = Math.ceil(player.x);
@@ -1581,6 +1860,7 @@
                     const b = getBlock(cx, cy);
                     if (b === BLOCK_TYPES.ROPE) return 'rope';
                     if (b === BLOCK_TYPES.LADDER) found = 'ladder';
+                    // переправа — это мостик: по ней ходят сверху, а не лазают
                 }
             return found;
         }
@@ -1640,27 +1920,124 @@
             showNotification('🧗 Верёвка смотана');
         }
 
+        // Переправа: верёвка натягивается горизонтально через пропасть или лаву,
+        // от края, на котором стоишь, до опоры на той стороне (не дальше BRIDGE_SPAN)
+        const BRIDGE_SPAN = 12;
+        function deployBridge() {
+            if (ropes <= 0) { showNotification('🧗 Верёвок нет — купи в лавке'); return 0; }
+            const row = Math.floor(player.y + 1);                 // ряд, на котором стоит игрок
+            const dir = player.direction;
+            let x = dir > 0 ? Math.floor(player.x + PLAYER_W) + 1 : Math.floor(player.x) - 1;
+            const cells = [];
+            while (cells.length < BRIDGE_SPAN && getBlock(x, row) === BLOCK_TYPES.AIR) { cells.push(x); x += dir; }
+            if (cells.length === 0 || !isBlocked(x, row)) {
+                showNotification(cells.length === 0 ? '🧗 Встань на край пропасти лицом к ней'
+                                                    : `🧗 Не дотянуть: до той стороны больше ${BRIDGE_SPAN} блоков`);
+                return 0;
+            }
+            for (const cx of cells) setBlock(cx, row, BLOCK_TYPES.BRIDGE);
+            ropes--;
+            showNotification(`🧗 Переправа натянута: ${cells.length} м`);
+            updateUI();
+            return cells.length;
+        }
+
+        // Смотать переправу целиком
+        function takeBridge(x, y) {
+            let a = x, b = x;
+            while (getBlock(a - 1, y) === BLOCK_TYPES.BRIDGE) a--;
+            while (getBlock(b + 1, y) === BLOCK_TYPES.BRIDGE) b++;
+            for (let cx = a; cx <= b; cx++) setBlock(cx, y, BLOCK_TYPES.AIR);
+            ropes = Math.min(MAX_GEAR, ropes + 1);
+            showNotification('🧗 Переправа смотана');
+        }
+
         function cageCost(depthM) {
-            return 5 + Math.ceil(depthM / 10);
+            return 10 + Math.ceil(depthM / 5);
+        }
+
+        // Сколько секунд клеть спускается за игроком
+        function cageWait(depthM) {
+            return Math.ceil(depthM / 10);
+        }
+
+        // Ожидание клети: игрок должен стоять на месте; движение или урон — вызов сорван
+        let cageCall = null;    // { left, x, y, damageAt }
+
+        // Клеть в долг можно и при уже взятом долге, пока общий долг не больше DEBT_LIMIT:
+        // иначе, взяв лопату в долг и оставшись без лестниц, можно застрять в шахте
+        const DEBT_LIMIT = 300;
+        function cageCreditOk(cost) {
+            return debt + cost * DEBT_MULT <= DEBT_LIMIT;
+        }
+
+        function cageBlocked() {
+            return BIOMES[biomeIndexAt(currentDepth())].hazard === 'жар';
+        }
+
+        function callCage() {
+            const depth = currentDepth();
+            if (depth < CAGE_MIN_DEPTH || cageBlocked()) return false;
+            const cost = cageCost(depth);
+            if (stats.money < cost && !cageCreditOk(cost)) return false;
+            cageCall = { left: cageWait(depth), x: player.x, y: player.y, damageAt: lastDamageAt };
+            closeCage();
+            showNotification(`⬆️ Клеть спускается: ${cageCall.left} с. Стой на месте!`);
+            return true;
+        }
+
+        function cancelCage(reason) {
+            if (!cageCall) return;
+            cageCall = null;
+            showNotification(`⬆️ Вызов клети сорван: ${reason}`);
+        }
+
+        function updateCage(dt) {
+            if (!cageCall) return;
+            if (Math.abs(player.x - cageCall.x) > 0.3 || Math.abs(player.y - cageCall.y) > 0.3) { cancelCage('ты сдвинулся'); return; }
+            if (lastDamageAt !== cageCall.damageAt) { cancelCage('тебя ранило'); return; }
+            cageCall.left -= dt;
+            if (cageCall.left <= 0) { cageCall = null; rideCage(); }
+        }
+
+        function renderCageWait() {
+            if (!cageCall) return;
+            const scale = canvas.clientWidth ? canvas.width / canvas.clientWidth : 1;
+            const size = Math.round(14 * scale);
+            const text = `⬆️ Клеть: ${Math.ceil(cageCall.left)} с — не двигайся`;
+            ctx.save();
+            ctx.font = `bold ${size}px "Courier New", monospace`;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(canvas.width / 2 - size * 11, canvas.height - size * 4, size * 22, size * 2);
+            ctx.fillStyle = '#FFD27F';
+            ctx.fillText(text, canvas.width / 2, canvas.height - size * 2.6);
+            ctx.restore();
         }
 
         function openCage() {
             const depth = currentDepth();
             if (depth < CAGE_MIN_DEPTH) { showNotification('⬆️ До поверхности рукой подать'); return false; }
+            if (cageBlocked()) { showNotification('⬆️ На Огненное дно клеть не спускается — выбирайся сам'); return false; }
+            if (cageCall) { showNotification(`⬆️ Клеть уже в пути: ${Math.ceil(cageCall.left)} с`); return false; }
             gameState.paused = true;
             const cost = cageCost(depth);
+            const wait = cageWait(depth);
             const box = document.getElementById('cageInfo');
             let action;
             if (stats.money >= cost) {
-                action = `<button class="btn" onclick="rideCage()">Поднять за ${cost} руб.</button>`;
-            } else if (debt === 0) {
-                action = `<button class="btn" onclick="rideCage()">В долг, вернуть ${cost * DEBT_MULT} руб.</button>`;
+                action = `<button class="btn" onclick="callCage()">Вызвать за ${cost} руб.</button>`;
+            } else if (cageCreditOk(cost)) {
+                action = `<button class="btn" onclick="callCage()">Вызвать в долг, вернуть ${cost * DEBT_MULT} руб.</button>`;
             } else {
                 action = `<button class="btn" disabled>Нужно ${cost} руб.</button>`;
             }
+            const stuckHint = stats.money < cost && !cageCreditOk(cost)
+                ? `<p>Долг не может быть больше ${DEBT_LIMIT} руб. Выбраться можно и без клети: <b>W + пробел</b> копает вверх — над головой и вверх-вперёд; на получившуюся ступеньку запрыгни и копай дальше.</p>` : '';
             box.innerHTML = `<p>Глубина ${depth} м. Подъём клетью — ${cost} руб.</p>
+                <p>Клеть спустится за <b>${wait} с</b>. Всё это время стой на месте: сдвинешься или тебя ранят — вызов сорвётся. Платишь, когда клеть пришла.</p>
                 <p>Рюкзак поднимется с тобой; наверху клеть останавливается у лавки.</p>
-                <p>У тебя: ${stats.money} руб.${debt > 0 ? ` · долг: ${debt} руб.` : ''}</p>
+                <p>У тебя: ${stats.money} руб.${debt > 0 ? ` · долг: ${debt} руб.` : ''}</p>${stuckHint}
                 <div class="modal-buttons">${action}
                 <button class="btn btn-secondary" onclick="closeCage()">Отмена</button></div>`;
             document.getElementById('cageModal').classList.add('active');
@@ -1679,9 +2056,9 @@
             if (stats.money >= cost) {
                 stats.money -= cost;
                 showNotification(`⬆️ Клеть подняла тебя с ${depth} м за ${cost} руб.`);
-            } else if (debt === 0) {
-                debt = cost * DEBT_MULT;
-                showNotification(`⬆️ Подъём в долг: вернёшь ${debt} руб. с выручки`);
+            } else if (cageCreditOk(cost)) {
+                debt += cost * DEBT_MULT;
+                showNotification(`⬆️ Подъём в долг: долг теперь ${debt} руб., вернёшь с выручки`);
             } else {
                 return false;
             }
@@ -1689,6 +2066,7 @@
             player.y = SURFACE_Y - 1;
             player.vx = 0;
             player.vy = 0;
+            fallTop = null;
             resetDig();
             closeCage();
             updateUI();
@@ -1713,6 +2091,26 @@
             return true;
         }
 
+        // Следим за полётом: от высшей точки до приземления
+        function trackFall() {
+            if (player.climbing) { fallTop = null; return; }
+            if (!player.onGround) {
+                fallTop = fallTop === null ? player.y : Math.min(fallTop, player.y);
+                return;
+            }
+            if (fallTop !== null) {
+                const drop = player.y - fallTop;
+                fallTop = null;
+                if (drop > SAFE_FALL) {
+                    if (lampShines() && LAMPS[lampTier].open) {
+                        lampLit = false;
+                        showNotification('🔦 Открытая лампа погасла от падения. Зажечь снова — у лавки');
+                    }
+                    damage(Math.round((drop - SAFE_FALL) * FALL_DAMAGE_PER_BLOCK), 'Падение с высоты');
+                }
+            }
+        }
+
         function isSprinting() {
             return !!(keys['ShiftLeft'] || keys['ShiftRight']);
         }
@@ -1720,7 +2118,7 @@
         // Обновление физики игрока
         function updatePlayer(dt) {
             if (gameState.paused) return;
-            if (debug.on && debug.fly) { updateFly(dt); return; }
+            if (debug.on && debug.fly) { updateFly(dt); fallTop = null; return; }
 
             // Управление (используем e.code для работы на любой раскладке)
             const speed = (isSprinting() ? MOVE_SPEED * SPRINT_MULT : MOVE_SPEED) * walkFactor();
@@ -1735,7 +2133,8 @@
             }
 
             // на лестнице и на её верхней ступеньке W — это «лезть», а не прыжок
-            if ((keys['KeyW'] || keys['ArrowUp']) && player.onGround &&
+            // с зажатым пробелом W — это «копать вверх», а не прыжок
+            if ((keys['KeyW'] || keys['ArrowUp']) && player.onGround && !keys['Space'] &&
                 !climbAt(player.x, player.y) && !climbTopBelow(player.x, player.y + 1)) {
                 player.vy = -JUMP_SPEED * jumpFactor();
                 player.onGround = false;
@@ -1747,6 +2146,7 @@
             const mdt = inWeb() ? dt * WEB_SLOW : dt;
             const steps = Math.max(1, Math.ceil(mdt / PHYSICS_STEP));
             for (let i = 0; i < steps; i++) movePlayer(mdt / steps);
+            trackFall();
 
             if (player.x < 0) player.x = 0;
             if (player.x > WORLD_WIDTH - PLAYER_W) player.x = WORLD_WIDTH - PLAYER_W - EPS;
@@ -1842,7 +2242,8 @@
             }
 
             let dy = 0;
-            if (up) dy = -base * (shift ? CLIMB_SPRINT : 1);
+            if (keys['Space']) dy = 0;                 // с пробелом W/S — прицел копания, а не лазанье
+            else if (up) dy = -base * (shift ? CLIMB_SPRINT : 1);
             else if (down) dy = base * (shift ? SLIDE_MULT : 1);
             if (dy === 0) return;
             let newY = player.y + dy * dt;
@@ -1908,8 +2309,12 @@
         }
 
         function die(reason) {
-            const lost = backpackCount();
-            backpack = emptyBackpack();
+            const keep = BACKPACKS[backpackTier].keepOnDeath;
+            const before = backpackCount();
+            for (const k in backpack) backpack[k] = Math.floor(backpack[k] * keep);
+            const lost = before - backpackCount();
+            fallTop = null;
+            cageCall = null;
             stats.score = Math.max(0, stats.score - 50);
             player.x = WORLD_WIDTH / 2;
             player.y = SURFACE_Y - 2;
@@ -1918,7 +2323,8 @@
             health = MAX_HEALTH;
             resetDig();
             showNotification(lost > 0
-                ? `💀 ${reason}. Рюкзак потерян (${lost} шт.), −50 очков`
+                ? (keep > 0 ? `💀 ${reason}. Из короба высыпалось ${lost} шт., половина уцелела. −50 очков`
+                            : `💀 ${reason}. Рюкзак потерян (${lost} шт.), −50 очков`)
                 : `💀 ${reason}. −50 очков`);
             updateUI();
         }
@@ -1986,9 +2392,30 @@
             }
             const mx = cells.reduce((s, c) => s + c[0], 0) / cells.length + 0.5;
             const my = cells.reduce((s, c) => s + c[1], 0) / cells.length + 0.5;
-            gasClouds.push({ x: mx, y: my, radius: 2 + Math.sqrt(cells.length), age: 0 });
+            const radius = 2 + Math.sqrt(cells.length);
+            const px = player.x + PLAYER_W / 2, py = player.y + 0.5;
+            if (lampShines() && LAMPS[lampTier].open && Math.hypot(px - mx, py - my) < radius + 1) {
+                gasBlast(mx, my);
+                return cells.length;
+            }
+            gasClouds.push({ x: mx, y: my, radius, age: 0 });
             showNotification('☣️ Рудничный газ! Отойди подальше');
             return cells.length;
+        }
+
+        // Открытое пламя поджигает газ: взрыв ранит и обрушивает породу вокруг
+        function gasBlast(cx, cy) {
+            for (let y = Math.floor(cy) - GAS_BLAST_RADIUS; y <= Math.floor(cy) + GAS_BLAST_RADIUS; y++)
+                for (let x = Math.floor(cx) - GAS_BLAST_RADIUS; x <= Math.floor(cx) + GAS_BLAST_RADIUS; x++) {
+                    const b = getBlock(x, y);
+                    if (b !== BLOCK_TYPES.BEDROCK && b !== BLOCK_TYPES.LAVA && Math.hypot(x + 0.5 - cx, y + 0.5 - cy) <= GAS_BLAST_RADIUS + 0.5) {
+                        setBlock(x, y, BLOCK_TYPES.AIR);
+                    }
+                }
+            lampLit = false;
+            damageFlash = 1;
+            showNotification('💥 Открытая лампа подожгла рудничный газ! Лампа погасла');
+            damage(GAS_BLAST_DAMAGE, 'Взрыв рудничного газа');
         }
 
         function updateHazards(dt) {
@@ -2054,6 +2481,26 @@
         // ---- Лечение ----
         const BANDAGE = { heal: 25, price: 15 };
         const MEDKIT = { heal: 60, price: 40 };
+        // Лечение носят на поясе, не в рюкзаке: без пояса — 2 бинта и 1 аптечка
+        const BELTS = [
+            { name: 'Без пояса',         bandages: 2, medkits: 1, price: 0 },
+            { name: 'Кожаный пояс',      bandages: 4, medkits: 2, price: 60 },
+            { name: 'Патронташ шахтёра', bandages: 6, medkits: 3, price: 200 }
+        ];
+        let beltTier = 0;
+
+        function medLimit(kind) { return kind === 'medkit' ? BELTS[beltTier].medkits : BELTS[beltTier].bandages; }
+
+        function buyBelt(tier) {
+            const b = BELTS[tier];
+            if (!b || tier <= beltTier) return false;
+            if (stats.money < b.price) { showNotification(`💰 Не хватает ${b.price - stats.money} руб.`); return false; }
+            stats.money -= b.price;
+            beltTier = tier;
+            showNotification(`🩹 ${b.name}: ${b.bandages} бинтов и ${b.medkits} аптечки`);
+            updateUI(); renderShopList();
+            return true;
+        }
         const HEAL_COOLDOWN = 1;      // с между применениями
         const MAX_MEDS = 99;
         let bandages = 0;
@@ -2082,6 +2529,11 @@
 
         function buyMed(kind) {
             const m = kind === 'medkit' ? MEDKIT : BANDAGE;
+            const have = kind === 'medkit' ? medkits : bandages;
+            if (have >= medLimit(kind)) {
+                showNotification(`🩹 На поясе нет места — больше ${medLimit(kind)} не унести. Пояс побольше — в лавке`);
+                return false;
+            }
             if (stats.money < m.price) { showNotification(`💰 Не хватает ${m.price - stats.money} руб.`); return false; }
             stats.money -= m.price;
             if (kind === 'medkit') medkits = Math.min(MAX_MEDS, medkits + 1);
@@ -2179,8 +2631,15 @@
         const HIT_COOLDOWN = 0.4;            // с между ударами игрока
         const HIT_REACH = 1.2;               // блоков перед игроком
         const PICK_DAMAGE = [1, 1.5, 2, 3];  // урон удара по номеру кирки
-        const LAMP_RADIUS = 4;
-        const LAMP_PRICE = 80;
+        // Лампы как в 1899 году: открытая светит ярче, но гаснет при падении и поджигает
+        // рудничный газ; закрытая лампа Дэви (пламя за сеткой) не гаснет и газ не поджигает
+        const LAMPS = [
+            { name: 'Нет',            price: 0,   radius: 0 },
+            { name: 'Открытая лампа', price: 60,  radius: 4, open: true },
+            { name: 'Лампа Дэви',     price: 180, radius: 3, open: false }
+        ];
+        const GAS_BLAST_DAMAGE = 40;
+        const GAS_BLAST_RADIUS = 2;
         const CANARY_PRICE = 30;
         const CANARY_RADIUS = 5;
         const FIREBALL_SPEED = 8;
@@ -2191,7 +2650,10 @@
         let creatures = [];
         let fireballs = [];
         let hitCooldown = 0;
-        let hasLamp = false;
+        let lampTier = 0;          // номер в LAMPS
+        let lampLit = true;        // открытая лампа может погаснуть
+        function lampShines() { return lampTier > 0 && lampLit; }
+        function lampRadius() { return lampShines() ? LAMPS[lampTier].radius : 0; }
         let hasCanary = false;
         let canaryAlarm = false;
         let respawnTimer = RESPAWN_INTERVAL;
@@ -2322,7 +2784,7 @@
         }
 
         function lampScares(c) {
-            return hasLamp && CREATURES[c.type].scaredByLamp && distToPlayer(c) < LAMP_RADIUS;
+            return lampShines() && CREATURES[c.type].scaredByLamp && distToPlayer(c) < lampRadius();
         }
 
         function tryBite(c) {
@@ -2337,6 +2799,11 @@
         }
 
         function stealOre(rat) {
+            if (BACKPACKS[backpackTier].ratProof) {
+                if (!rat.foiled) { rat.foiled = true; showNotification('🐀 Крыса не смогла открыть застёжки ранца'); }
+                rat.state = 'flee'; rat.timer = 3;
+                return;
+            }
             const kinds = Object.keys(backpack).filter(k => backpack[k] > 0);
             if (kinds.length === 0 || rat.loot) return;
             const k = kinds[Math.floor(hazardRandom() * kinds.length)];
@@ -2544,12 +3011,14 @@
             return false;
         }
 
-        function buyLamp() {
-            if (hasLamp) return false;
-            if (stats.money < LAMP_PRICE) { showNotification(`💰 Не хватает ${LAMP_PRICE - stats.money} руб.`); return false; }
-            stats.money -= LAMP_PRICE;
-            hasLamp = true;
-            showNotification('🔦 Куплена шахтёрская лампа: летучие мыши и пауки её боятся');
+        function buyLamp(tier = 1) {
+            const l = LAMPS[tier];
+            if (!l || tier <= lampTier) return false;
+            if (stats.money < l.price) { showNotification(`💰 Не хватает ${l.price - stats.money} руб.`); return false; }
+            stats.money -= l.price;
+            lampTier = tier;
+            lampLit = true;
+            showNotification(tier === 2 ? '🔦 Куплена лампа Дэви: не гаснет и не поджигает газ' : '🔦 Куплена открытая лампа: береги её от падений и газа');
             updateUI(); renderShopList();
             return true;
         }
@@ -2567,9 +3036,9 @@
         function renderCreatures() {
             const T = TILE_SIZE, t = hazardClock;
             // свет лампы
-            if (hasLamp && player.y >= SURFACE_Y) {
+            if (lampShines() && player.y >= SURFACE_Y) {
                 const px = (player.x + PLAYER_W / 2 - camera.x) * T, py = (player.y + 0.5 - camera.y) * T;
-                const r = LAMP_RADIUS * T;
+                const r = lampRadius() * T;
                 const g = ctx.createRadialGradient ? ctx.createRadialGradient(px, py, 0, px, py, r) : null;
                 if (g && g.addColorStop) {
                     g.addColorStop(0, 'rgba(255, 220, 140, 0.18)');
@@ -2693,7 +3162,7 @@
         }
 
         function burden() {
-            return Math.min(1, backpackWeight() / WEIGHT_FOR_MAX_SLOW);
+            return Math.min(1, backpackWeight() * BACKPACKS[backpackTier].weightMult / WEIGHT_FOR_MAX_SLOW);
         }
 
         function walkFactor() { return 1 - MAX_WALK_SLOW * burden(); }
@@ -2869,7 +3338,8 @@
             const gear = [
                 { name: `🧗 Лестницы ×${LADDER_PACK.count}`, info: `ставятся клавишей Q · у тебя: ${ladders}`, price: LADDER_PACK.price, fn: 'buyLadders()' },
                 { name: '🧗 Верёвка', info: `${ROPE_LENGTH} м, спускается клавишей R · у тебя: ${ropes}`, price: ROPE_PRICE, fn: 'buyRope()' },
-                { name: '🔦 Шахтёрская лампа', info: 'отпугивает летучих мышей и пауков', price: LAMP_PRICE, fn: 'buyLamp()', owned: hasLamp },
+                { name: '🔦 Открытая лампа', info: 'светит на 4 блока, отпугивает мышей и пауков; гаснет при падении, поджигает газ', price: LAMPS[1].price, fn: 'buyLamp(1)', owned: lampTier >= 1 },
+                { name: '🔦 Лампа Дэви', info: 'закрытая: светит на 3 блока, не гаснет и не поджигает газ', price: LAMPS[2].price, fn: 'buyLamp(2)', owned: lampTier >= 2 },
                 { name: '🐤 Канарейка', info: 'беспокоится рядом с газом; в газу погибает', price: CANARY_PRICE, fn: 'buyCanary()', owned: hasCanary }
             ];
             for (const g of gear) {
@@ -2891,8 +3361,8 @@
 
             section('Лечение');
             for (const m of [
-                { kind: 'bandage', name: '🩹 Бинт', info: `+${BANDAGE.heal} здоровья · у тебя: ${bandages}`, price: BANDAGE.price },
-                { kind: 'medkit', name: '✚ Аптечка', info: `+${MEDKIT.heal} здоровья · у тебя: ${medkits}`, price: MEDKIT.price }
+                { kind: 'bandage', name: '🩹 Бинт', info: `+${BANDAGE.heal} здоровья · у тебя: ${bandages} из ${medLimit('bandage')}`, price: BANDAGE.price },
+                { kind: 'medkit', name: '✚ Аптечка', info: `+${MEDKIT.heal} здоровья · у тебя: ${medkits} из ${medLimit('medkit')}`, price: MEDKIT.price }
             ]) {
                 const item = document.createElement('div');
                 item.className = 'shop-item';
@@ -2907,6 +3377,25 @@
                     ${action}`;
                 list.appendChild(item);
             }
+
+            // пояса: сколько лечения можно носить
+            BELTS.forEach((b, tier) => {
+                if (tier === 0) return;
+                const item = document.createElement('div');
+                item.className = 'shop-item' + (tier === beltTier ? ' owned' : tier < beltTier ? ' below' : '');
+                let action;
+                if (tier === beltTier) action = '<button class="btn btn-small" disabled>Надет</button>';
+                else if (tier < beltTier) action = '<button class="btn btn-small" disabled>Хуже твоего</button>';
+                else if (stats.money < b.price) action = `<button class="btn btn-small" disabled>${b.price} руб.</button>`;
+                else action = `<button class="btn btn-small" onclick="buyBelt(${tier})">Купить за ${b.price} руб.</button>`;
+                item.innerHTML = `
+                    <div>
+                        <div class="shop-item-name">🎽 ${b.name}</div>
+                        <div class="shop-item-info">${b.bandages} бинтов и ${b.medkits} аптечки (без пояса — ${BELTS[0].bandages} и ${BELTS[0].medkits})</div>
+                    </div>
+                    ${action}`;
+                list.appendChild(item);
+            });
 
             section('Рюкзаки');
             BACKPACKS.forEach((b, tier) => {
@@ -2949,6 +3438,11 @@
 
         // Вызывается каждый кадр: продажа происходит, как только игрок подошёл
         function checkShop() {
+            if (isAtShop() && lampTier > 0 && !lampLit) {
+                lampLit = true;
+                showNotification('🔦 В лавке лампу зажгли снова');
+                updateUI();
+            }
             if (isAtShop() && backpackCount() > 0) {
                 sellBackpack();
             }
@@ -2960,6 +3454,19 @@
         function digTarget() {
             if (keys['KeyS'] || keys['ArrowDown']) {
                 return { x: Math.floor(player.x + PLAYER_W / 2), y: Math.floor(player.y + 1) };
+            }
+            // W + пробел — копать вверх: над головой, потом вверх-вперёд и ещё на блок выше.
+            // Получается ступенька с проходом высотой в два блока — на неё запрыгиваешь
+            // (W) и идёшь дальше. Так из любой глубины можно выбраться без лестниц.
+            if (keys['KeyW'] || keys['ArrowUp']) {
+                const row = Math.floor(player.y + 0.5) - 1;
+                const fx = player.direction > 0 ? Math.floor(player.x + PLAYER_W) + 1 : Math.floor(player.x) - 1;
+                const solid = (x, y) => { const b = getBlock(x, y); return b !== BLOCK_TYPES.AIR && b !== BLOCK_TYPES.LAVA && !isClimbable(b) && b !== BLOCK_TYPES.BEDROCK; };
+                const cx = Math.floor(player.x + PLAYER_W / 2);
+                if (solid(cx, row)) return { x: cx, y: row };
+                if (solid(fx, row)) return { x: fx, y: row };
+                if (solid(fx, row - 1)) return { x: fx, y: row - 1 };
+                return { x: fx, y: row };
             }
             return {
                 x: player.direction > 0 ? Math.floor(player.x + PLAYER_W) + 1 : Math.floor(player.x) - 1,
@@ -3048,7 +3555,7 @@
         // Копая вниз (S), лестницу и верёвку под собой не снимаем — иначе, спускаясь
         // по своей же лестнице, легко разобрать её. Снимают их, встав рядом.
         function climbBlockedDown(block) {
-            return isClimbable(block) && !!(keys['KeyS'] || keys['ArrowDown']);
+            return isClimbable(block) && !!(keys['KeyS'] || keys['ArrowDown'] || keys['KeyW'] || keys['ArrowUp']);
         }
 
         // Разрушить блок и получить за него очки и руду
@@ -3063,6 +3570,7 @@
                 return;
             }
             if (block === BLOCK_TYPES.ROPE) { takeRope(targetX, targetY); updateUI(); return; }
+            if (block === BLOCK_TYPES.BRIDGE) { takeBridge(targetX, targetY); updateUI(); return; }
             if (block === BLOCK_TYPES.WEB) { setBlock(targetX, targetY, BLOCK_TYPES.AIR); return; }
 
             if (block !== BLOCK_TYPES.AIR && block !== BLOCK_TYPES.BEDROCK) {
@@ -3147,6 +3655,14 @@
                         ctx.stroke();
                         ctx.strokeRect(px + 5, py + 5, TILE_SIZE - 10, TILE_SIZE - 10);
                     }
+                    if (block === BLOCK_TYPES.BRIDGE) {
+                        const px = x * TILE_SIZE, py = y * TILE_SIZE;
+                        ctx.fillStyle = BLOCK_COLORS[BLOCK_TYPES.ROPE];
+                        ctx.fillRect(px, py + 1, TILE_SIZE, 2);                  // верхний канат
+                        ctx.fillRect(px, py + TILE_SIZE - 7, TILE_SIZE, 2);      // нижний канат
+                        ctx.fillStyle = '#8B5A2B';
+                        ctx.fillRect(px + 2, py + TILE_SIZE - 6, TILE_SIZE - 4, 3); // дощечка
+                    }
                     if (block === BLOCK_TYPES.ROPE) {
                         const px = x * TILE_SIZE, py = y * TILE_SIZE;
                         ctx.fillStyle = BLOCK_COLORS[BLOCK_TYPES.ROPE];
@@ -3179,6 +3695,7 @@
             renderHazards();
             if (touchMode) renderTouchHud();
             renderRadioBadge();
+            renderCageWait();
 
             const playerScreenX = (player.x - camera.x) * TILE_SIZE;
             const playerScreenY = (player.y - camera.y) * TILE_SIZE;
@@ -3388,7 +3905,8 @@
             document.getElementById('shovel').textContent = SHOVELS[shovelTier].name;
             document.getElementById('ladders').textContent = ladders;
             document.getElementById('ropes').textContent = ropes;
-            const gearList = [hasLamp ? 'лампа' : null, hasCanary ? 'канарейка' : null].filter(Boolean);
+            const gearList = [lampTier ? LAMPS[lampTier].name.toLowerCase() + (lampLit ? '' : ' (погасла)') : null,
+                              beltTier ? BELTS[beltTier].name.toLowerCase() : null, hasCanary ? 'канарейка' : null].filter(Boolean);
             document.getElementById('gear').textContent = gearList.length ? gearList.join(', ') : '—';
             const meds = [bandages ? `бинты ${bandages}` : null, medkits ? `аптечки ${medkits}` : null].filter(Boolean);
             document.getElementById('meds').textContent = meds.length ? meds.join(' · ') : '—';
@@ -3479,7 +3997,9 @@
                 health: Math.round(health),
                 ladders: ladders,
                 ropes: ropes,
-                lamp: hasLamp,
+                lamp: lampTier,
+                lampLit: lampLit,
+                belt: beltTier,
                 canary: hasCanary,
                 backpackTier: backpackTier,
                 bandages: bandages,
@@ -3510,6 +4030,10 @@
             // 5 → 6: появились лестницы и верёвки — выдаём стартовый запас
             if (saveData.version === 5) {
                 saveData = Object.assign({}, saveData, { version: 6, ladders: START_LADDERS, ropes: 0 });
+            }
+            // 6 → 7: лампа стала двух видов (купленная раньше — открытая), появился пояс
+            if (saveData.version === 6) {
+                saveData = Object.assign({}, saveData, { version: 7, lamp: saveData.lamp === true ? 1 : 0, lampLit: true, belt: 0 });
             }
             return saveData;
         }
@@ -3592,7 +4116,13 @@
             const medCount = v => { const n = Number(v); return Number.isInteger(n) && n >= 0 ? Math.min(MAX_MEDS, n) : 0; };
             bandages = medCount(saveData.bandages);
             medkits = medCount(saveData.medkits);
-            hasLamp = saveData.lamp === true;
+            const lt = Number(saveData.lamp);
+            lampTier = (Number.isInteger(lt) && lt >= 0 && lt < LAMPS.length) ? lt : 0;
+            lampLit = saveData.lampLit !== false;
+            const bt = Number(saveData.belt);
+            beltTier = (Number.isInteger(bt) && bt >= 0 && bt < BELTS.length) ? bt : 0;
+            fallTop = null;
+            cageCall = null;
             hasCanary = saveData.canary === true;
             resetDig();
 
@@ -3740,7 +4270,11 @@
                 debt = 0;
                 ladders = START_LADDERS;
                 ropes = 0;
-                hasLamp = false;
+                lampTier = 0;
+                lampLit = true;
+                beltTier = 0;
+                fallTop = null;
+                cageCall = null;
                 hasCanary = false;
                 backpackTier = 0;
                 bandages = 0;
@@ -3907,12 +4441,74 @@
         const MAX_NOTIFICATIONS = 4;
         const liveNotifications = [];
 
+        // ---- Настройки игрока (хранятся в браузере, не в сохранениях) ----
+        const SETTINGS_KEY = 'miner_settings';
+        const NOTIFY_POSITIONS = ['top-right', 'top-left', 'top-center', 'bottom-right', 'bottom-left', 'bottom-center'];
+        const settings = { notify: 'top-right', swap: false };
+
+        function loadSettings() {
+            try {
+                const st = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+                if (NOTIFY_POSITIONS.includes(st.notify)) settings.notify = st.notify;
+                settings.swap = st.swap === true;
+            } catch (e) { /* испорченные настройки — по умолчанию */ }
+        }
+
+        function saveSettings() {
+            safeSetItem(SETTINGS_KEY, JSON.stringify(settings));
+        }
+
+        function applySettings() {
+            if (document.body && document.body.classList) document.body.classList.toggle('swap-panels', settings.swap);
+            const box = document.getElementById('swapPanels');
+            if (box) box.checked = settings.swap;
+            if (document.querySelectorAll) {
+                document.querySelectorAll('#notifyOptions [data-notify]').forEach(b =>
+                    b.classList.toggle('chosen', b.dataset.notify === settings.notify));
+            }
+            restackNotifications();
+        }
+
+        function setNotifyPosition(pos) {
+            if (!NOTIFY_POSITIONS.includes(pos)) return false;
+            settings.notify = pos;
+            saveSettings();
+            applySettings();
+            return true;
+        }
+
+        function setSwapPanels(on) {
+            settings.swap = !!on;
+            saveSettings();
+            applySettings();
+        }
+
+        function openSettings() {
+            gameState.paused = true;
+            applySettings();
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+            gameState.paused = false;
+        }
+
+        // Расставить уведомления стопкой у выбранного края. На телефоне — только сверху
+        // (внизу кнопки) и ниже сводки здоровья и глубины.
         function restackNotifications() {
             const onPhone = document.body && document.body.classList && document.body.classList.contains('touch');
-            let top = onPhone ? 44 : 20;
+            let [vert, horiz] = settings.notify.split('-');
+            if (onPhone) vert = 'top';
+            let offset = vert === 'top' && onPhone ? 44 : 20;
             for (const n of liveNotifications) {
-                n.style.top = top + 'px';
-                top += (n.offsetHeight || 50) + 8;
+                const st = n.style;
+                st.top = vert === 'top' ? offset + 'px' : 'auto';
+                st.bottom = vert === 'bottom' ? offset + 'px' : 'auto';
+                st.left = horiz === 'left' ? '20px' : horiz === 'center' ? '50%' : 'auto';
+                st.right = horiz === 'right' ? (onPhone ? '8px' : '20px') : 'auto';
+                st.transform = horiz === 'center' ? 'translateX(-50%)' : 'none';
+                offset += (n.offsetHeight || 50) + 8;
             }
         }
 
@@ -3963,6 +4559,7 @@
                 updateDigging(dt);
                 updateHazards(dt);
                 updateCreatures(dt);
+                updateCage(dt);
                 checkShop();
                 updateBiome(currentTime);
                 updateCamera();
@@ -3979,44 +4576,129 @@
         }
 
         // ============ РАДИО ============
-        // Онлайн-трансляции станций. Пока радио выключено, игра в сеть не обращается:
-        // проигрыватель создаётся и подключается к станции только по нажатию игрока.
-        // Станцию и громкость игра помнит (в браузере), но сама радио не включает.
-        const RADIO_STATIONS = [
-            { name: 'Радио Рекорд',        url: 'https://radiorecord.hostingradio.ru/rr_main96.aacp' },
-            { name: 'Рекорд Rock',         url: 'https://radiorecord.hostingradio.ru/rock96.aacp' },
-            { name: 'Рекорд Eurodance',    url: 'https://radiorecord.hostingradio.ru/eurodance96.aacp' },
-            { name: 'Рекорд Ambient',      url: 'https://radiorecord.hostingradio.ru/ambient96.aacp' },
-            { name: 'SomaFM Groove Salad', url: 'https://ice.somafm.com/groovesalad' },
-            { name: 'SomaFM Secret Agent', url: 'https://ice.somafm.com/secretagent' },
-            { name: 'SomaFM 80-е',         url: 'https://ice.somafm.com/u80s' },
-            { name: 'SomaFM Drone Zone',   url: 'https://ice.somafm.com/dronezone' }
-        ];
+        // Онлайн-трансляции станций, которые игрок добавляет сам: готовых станций нет,
+        // потому что в разных странах доступны разные. Пока радио выключено, игра в сеть
+        // не обращается: проигрыватель подключается к станции только по нажатию «Вкл».
+        // Список станций, выбранная станция и громкость хранятся в браузере.
         const RADIO_PREFS_KEY = 'miner_radio';
+        const RADIO_MAX_STATIONS = 30;
 
-        const radio = { audio: null, index: 0, volume: 0.6, on: false, status: 'off' };
+        const radio = { audio: null, stations: [], index: 0, volume: 0.6, on: false, status: 'off' };
+
+        function radioCurrent() {
+            return radio.stations[radio.index] || null;
+        }
 
         function radioLoadPrefs() {
             try {
                 const p = JSON.parse(localStorage.getItem(RADIO_PREFS_KEY) || '{}');
-                if (Number.isInteger(p.index) && p.index >= 0 && p.index < RADIO_STATIONS.length) radio.index = p.index;
+                if (Array.isArray(p.stations)) {
+                    radio.stations = p.stations
+                        .filter(s => s && typeof s.name === 'string' && typeof s.url === 'string' && radioCheckUrl(s.url) === null)
+                        .slice(0, RADIO_MAX_STATIONS)
+                        .map(s => ({ name: s.name.slice(0, 40), url: s.url }));
+                }
+                if (Number.isInteger(p.index) && p.index >= 0 && p.index < radio.stations.length) radio.index = p.index;
                 if (Number.isFinite(p.volume) && p.volume >= 0 && p.volume <= 1) radio.volume = p.volume;
             } catch (e) { /* испорченные настройки — берём по умолчанию */ }
         }
 
         function radioSavePrefs() {
-            try { localStorage.setItem(RADIO_PREFS_KEY, JSON.stringify({ index: radio.index, volume: radio.volume })); }
-            catch (e) { /* хранилище недоступно — не страшно */ }
+            safeSetItem(RADIO_PREFS_KEY, JSON.stringify({ stations: radio.stations, index: radio.index, volume: radio.volume }));
+        }
+
+        // null — адрес годится, иначе текст ошибки
+        function radioCheckUrl(url) {
+            let u;
+            try { u = new URL(url); } catch (e) { return 'это не похоже на адрес'; }
+            if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'адрес должен начинаться с https://';
+            return null;
+        }
+
+        // Добавить станцию. Возвращает null или текст ошибки.
+        function radioAddStation(name, url) {
+            url = String(url || '').trim();
+            name = String(name || '').trim();
+            const err = radioCheckUrl(url);
+            if (err) return err;
+            if (radio.stations.some(s => s.url === url)) return 'такая станция уже есть';
+            if (radio.stations.length >= RADIO_MAX_STATIONS) return `не больше ${RADIO_MAX_STATIONS} станций`;
+            if (!name) name = new URL(url).hostname;
+            radio.stations.push({ name: name.slice(0, 40), url });
+            if (radio.stations.length === 1) radio.index = 0;
+            radioSavePrefs();
+            radioRenderList();
+            radioSetStatus(radio.status === 'error' ? 'off' : radio.status);
+            return null;
+        }
+
+        function radioRemoveStation(i) {
+            if (i < 0 || i >= radio.stations.length) return false;
+            if (radio.on && i === radio.index) radioStop();
+            radio.stations.splice(i, 1);
+            if (radio.index >= radio.stations.length) radio.index = Math.max(0, radio.stations.length - 1);
+            else if (i < radio.index) radio.index--;
+            radioSavePrefs();
+            radioRenderList();
+            radioSetStatus(radio.on ? radio.status : 'off');
+            return true;
+        }
+
+        function radioSelect(i) {
+            if (i < 0 || i >= radio.stations.length) return;
+            radio.index = i;
+            radioSavePrefs();
+            radioRenderList();
+            if (radio.on) radioPlay(); else radioSetStatus('off');
+        }
+
+        // Форма «добавить станцию» в панели
+        function radioAddFromForm() {
+            const nameEl = document.getElementById('radioName');
+            const urlEl = document.getElementById('radioUrl');
+            const err = radioAddStation(nameEl.value, urlEl.value);
+            const msg = document.getElementById('radioFormMsg');
+            if (err) {
+                msg.textContent = `Не добавлено: ${err}`;
+                msg.className = 'radio-note error';
+                return false;
+            }
+            msg.textContent = 'Станция добавлена';
+            msg.className = 'radio-note';
+            nameEl.value = '';
+            urlEl.value = '';
+            return true;
+        }
+
+        function radioRenderList() {
+            const list = document.getElementById('radioList');
+            if (!list || typeof list.appendChild !== 'function') return;
+            list.innerHTML = '';
+            if (!radio.stations.length) {
+                const li = document.createElement('li');
+                li.className = 'radio-empty';
+                li.textContent = 'Пока пусто — добавь станцию ниже';
+                list.appendChild(li);
+                return;
+            }
+            radio.stations.forEach((s, i) => {
+                const li = document.createElement('li');
+                li.className = i === radio.index ? 'current' : '';
+                li.innerHTML = `<button class="radio-pick" onclick="radioSelect(${i})" title="${escapeHtml(s.url)}">${i === radio.index ? '♪ ' : ''}${escapeHtml(s.name)}</button>
+                    <button class="radio-del" onclick="radioRemoveStation(${i})" aria-label="Удалить станцию">✕</button>`;
+                list.appendChild(li);
+            });
         }
 
         function radioSetStatus(status) {
             radio.status = status;
             const text = { off: 'выключено', connecting: 'подключение…', live: 'в эфире', error: 'станция недоступна' }[status];
             const st = document.getElementById('radioStatus');
-            st.textContent = text;
+            st.textContent = radio.stations.length ? text : 'добавь станцию в «Мои станции»';
             st.classList.toggle('live', status === 'live');
             st.classList.toggle('error', status === 'error');
-            document.getElementById('radioStation').textContent = RADIO_STATIONS[radio.index].name;
+            const cur = radioCurrent();
+            document.getElementById('radioStation').textContent = cur ? cur.name : 'Станций нет';
             document.getElementById('radioToggle').textContent = radio.on ? '■ Выкл' : '▶ Вкл';
             const tb = document.getElementById('tRadio');
             if (tb && tb.classList) tb.classList.toggle('on', radio.on);
@@ -4030,19 +4712,26 @@
             a.addEventListener('waiting', () => { if (radio.on) radioSetStatus('connecting'); });
             a.addEventListener('error', () => {
                 if (!radio.on) return;
+                const cur = radioCurrent();
                 radioStop(false);
                 radioSetStatus('error');
-                showNotification(`📻 ${RADIO_STATIONS[radio.index].name} сейчас недоступна — попробуй другую станцию`);
+                showNotification(`📻 ${cur ? cur.name : 'Станция'} сейчас недоступна — проверь адрес или выбери другую`);
             });
             radio.audio = a;
             return a;
         }
 
         function radioPlay() {
+            const cur = radioCurrent();
+            if (!cur) {
+                radioPanelToggle(true);
+                showNotification('📻 Сначала добавь станцию в «Мои станции»');
+                return;
+            }
             const a = radioEnsureAudio();
             radio.on = true;
             a.volume = radio.volume;
-            a.src = RADIO_STATIONS[radio.index].url;
+            a.src = cur.url;
             radioSetStatus('connecting');
             const p = a.play();
             if (p && typeof p.catch === 'function') {
@@ -4070,9 +4759,8 @@
         }
 
         function radioSwitch(step) {
-            radio.index = (radio.index + step + RADIO_STATIONS.length) % RADIO_STATIONS.length;
-            radioSavePrefs();
-            if (radio.on) radioPlay(); else radioSetStatus(radio.status === 'error' ? 'off' : radio.status);
+            if (!radio.stations.length) return;
+            radioSelect((radio.index + step + radio.stations.length) % radio.stations.length);
         }
 
         function radioSetVolume(v) {
@@ -4081,12 +4769,21 @@
             radioSavePrefs();
         }
 
+        // Панель радио: клавиша M (Ь) или кнопка «Радио» на телефоне показывают и прячут её
+        function radioPanelToggle(open) {
+            const panel = document.getElementById('radioPanel');
+            const show = open === undefined ? !panel.classList.contains('open') : open;
+            panel.classList.toggle('open', show);
+            return show;
+        }
+
         // Значок поверх игры, пока играет радио
         function renderRadioBadge() {
-            if (!radio.on) return;
+            const cur = radioCurrent();
+            if (!radio.on || !cur) return;
             const scale = canvas.clientWidth ? canvas.width / canvas.clientWidth : 1;
             const size = Math.round(12 * scale);
-            const text = `♪ ${RADIO_STATIONS[radio.index].name}${radio.status === 'connecting' ? '…' : ''}`;
+            const text = `♪ ${cur.name}${radio.status === 'connecting' ? '…' : ''}`;
             ctx.save();
             ctx.font = `${size}px "Courier New", monospace`;
             const w = ctx.measureText ? ctx.measureText(text).width : text.length * size * 0.6;
@@ -4101,15 +4798,18 @@
         }
 
         radioLoadPrefs();
+        radioRenderList();
         radioSetStatus('off');
         document.getElementById('radioVolume').value = Math.round(radio.volume * 100);
 
         // Обработка клавиатуры (сенсорные кнопки зовут те же функции)
         // Клавиши-действия срабатывают один раз на нажатие: автоповтор при удержании
         // не должен, например, тратить бинты один за другим
-        const ONE_SHOT_KEYS = new Set(['KeyE', 'KeyQ', 'KeyR', 'KeyC', 'KeyH', 'KeyM', 'Backquote', 'KeyG', 'Escape']);
+        const ONE_SHOT_KEYS = new Set(['KeyE', 'KeyQ', 'KeyR', 'KeyT', 'KeyC', 'KeyH', 'KeyM', 'Backquote', 'KeyG', 'Escape']);
 
         function onKeyDown(e) {
+            // набор текста в полях (название станции, адрес, имя сохранения) — не управление
+            if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.code !== 'Enter' && e.code !== 'Escape') return;
             keys[e.code] = true;
             if (e.repeat && ONE_SHOT_KEYS.has(e.code)) return;
 
@@ -4128,14 +4828,16 @@
             }
             if (e.code === 'KeyQ' && !gameState.paused) placeLadder();
             if (e.code === 'KeyR' && !gameState.paused) deployRope();
+            if (e.code === 'KeyT' && !gameState.paused) deployBridge();
             if (e.code === 'KeyC' && !gameState.paused) openCage();
             if (e.code === 'KeyH' && !gameState.paused) heal();
-            if (e.code === 'KeyM' && !gameState.paused) radioToggle();
+            if (e.code === 'KeyM' && !gameState.paused) radioPanelToggle();
 
             if (e.code === 'Escape') {
                 e.preventDefault();
                 if (gameState.paused) {
                     closeCage();
+                    closeSettings();
                     closeShop();
                     closeSaveModal();
                     closeLoadModal();
@@ -4176,6 +4878,12 @@
             if (touchMode) return;
             touchMode = true;
             document.body.classList.add('touch');
+            // кнопки сохранений — в меню ☰, сразу под «Вернуться в игру»
+            const savePanel = document.getElementById('savePanel');
+            const menuClose = document.getElementById('menuClose');
+            if (menuClose && menuClose.parentNode && menuClose.parentNode.insertBefore) {
+                menuClose.parentNode.insertBefore(savePanel, menuClose.nextSibling);
+            }
             fitCanvasForDevice();
         }
 
@@ -4257,6 +4965,8 @@
         });
 
         if (DEBUG_ALLOWED) document.getElementById('debugHelp').style.display = '';
+        loadSettings();
+        applySettings();
 
         // Автосохранение каждые 30 секунд
         setInterval(autoSave, AUTOSAVE_INTERVAL);
