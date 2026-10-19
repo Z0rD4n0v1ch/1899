@@ -140,6 +140,262 @@
             margin-top: 0;
         }
 
+        .setting-options.two {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* ---- Граммофон (эскиз радио) ---- */
+        .gramophone {
+            display: none;
+            position: relative;
+            height: 118px;
+            margin: 4px auto 6px;
+            width: 160px;
+        }
+
+        body.radio-gramophone .gramophone {
+            display: block;
+        }
+
+        .gr-box {
+            position: absolute;
+            left: 18px;
+            bottom: 0;
+            width: 96px;
+            height: 30px;
+            background: linear-gradient(#7a4a24, #4a2a14);
+            border: 2px solid #3a2410;
+            border-radius: 4px;
+        }
+
+        .gr-crank {
+            position: absolute;
+            left: -12px;
+            top: 9px;
+            width: 12px;
+            height: 3px;
+            background: #c8a165;
+        }
+
+        .gr-record {
+            position: absolute;
+            left: 26px;
+            bottom: 24px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background:
+                conic-gradient(from 0deg, rgba(255, 255, 255, 0.18) 0 8%, transparent 8% 50%, rgba(255, 255, 255, 0.12) 50% 56%, transparent 56%),
+                repeating-radial-gradient(circle, #151515 0 2px, #262626 2px 4px);
+            border: 2px solid #0d0d0d;
+        }
+
+        .gr-label {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            margin: -11px 0 0 -11px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #222 0 2px, #b33 3px);
+        }
+
+        #radioPanel.playing .gr-record {
+            animation: gr-spin 1.8s linear infinite;
+        }
+
+        @keyframes gr-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #radioPanel.playing .gr-record { animation: none; }
+        }
+
+        /* рупор: узкая труба от пластинки вверх-вправо и широкий раструб */
+        .gr-horn {
+            position: absolute;
+            left: 92px;
+            top: 34px;
+            width: 40px;
+            height: 10px;
+            background: linear-gradient(#e2bf72, #a8803a);
+            transform: rotate(-38deg);
+            transform-origin: left center;
+            clip-path: polygon(0 35%, 100% 0, 100% 100%, 0 65%);
+        }
+
+        .gr-bell {
+            position: absolute;
+            left: 112px;
+            top: 0;
+            width: 44px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 55%, #6b4a1c 0 30%, #d9b061 34%, #a8803a 70%);
+            border: 2px solid #7a5a24;
+        }
+
+        .gr-arm {
+            position: absolute;
+            left: 74px;
+            top: 44px;
+            width: 26px;
+            height: 3px;
+            background: #c8a165;
+            transform: rotate(35deg);
+            transform-origin: right center;
+        }
+
+        /* ---- Видео: простой вид без корпуса телевизора ---- */
+        body.video-plain .tv {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        body.video-plain .tv-knobs {
+            display: none;
+        }
+
+        body.video-plain .tv-screen {
+            border-radius: 4px;
+        }
+
+        body.video-plain .tv-off {
+            left: 0;
+            right: 0;
+            top: 0;
+        }
+
+        /* ---- Вынесенный телевизор: поверх игры, крупнее, можно тянуть за заголовок
+           и менять размер за правый нижний угол ---- */
+        #videoPanel.open.detached {
+            position: fixed;
+            z-index: 870;
+            width: min(640px, 92vw);
+            max-width: 96vw;
+            max-height: 92vh;
+            overflow: auto;
+            resize: both;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        #videoPanel.detached .radio-head {
+            cursor: move;
+            user-select: none;
+        }
+
+        #videoPanel.detached .radio-manage {
+            display: none;
+        }
+
+        /* телевизор скрыт, пока его не открыли клавишей V */
+        #videoPanel {
+            display: none;
+        }
+
+        #videoPanel.open {
+            display: block;
+            padding: 12px 15px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* корпус телевизора: дерево, кинескоп со скруглёнными углами, две ручки */
+        .tv {
+            position: relative;
+            margin: 6px 0 8px;
+            padding: 8px 8px 22px;
+            background: linear-gradient(#6b3e1e, #4a2a14);
+            border-radius: 10px;
+            border: 2px solid #3a2410;
+        }
+
+        .tv-screen {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0b0b0b;
+            border-radius: 14px / 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
+        }
+
+        .video-player {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #000;
+        }
+
+        .tv-off {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            top: 8px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 22px;
+            pointer-events: none;
+        }
+
+        .tv-knobs {
+            position: absolute;
+            right: 10px;
+            bottom: 5px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .tv-knobs span {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #c8a165;
+            border: 1px solid #3a2410;
+        }
+
+        .video-title {
+            color: #ffa500;
+            font-weight: bold;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #videoList {
+            list-style: none;
+            margin-bottom: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        #videoList li {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        #videoList li.current .radio-pick {
+            border-color: #ffa500;
+            color: #ffa500;
+        }
+
+        #videoList li.radio-empty {
+            color: #888;
+            font-size: 12px;
+        }
+
         /* панель радио скрыта, пока её не открыли клавишей M */
         #radioPanel {
             display: none;
@@ -842,6 +1098,16 @@
             height: 0;
         }
 
+        body.touch #videoPanel.open {
+            position: fixed;
+            top: calc(44px + env(safe-area-inset-top, 0px));
+            left: 8px;
+            width: min(360px, calc(100vw - 16px));
+            max-height: calc(100vh - 260px);
+            overflow-y: auto;
+            z-index: 860;
+        }
+
         body.touch #radioPanel.open {
             position: fixed;
             top: calc(44px + env(safe-area-inset-top, 0px));
@@ -927,7 +1193,7 @@
     </style>
 </head>
 <body>
-    <h1>⛏️ Miner 1899 <span style="font-size:14px;color:#888;font-weight:normal">v1.7.0</span></h1>
+    <h1>⛏️ Miner 1899 <span style="font-size:14px;color:#888;font-weight:normal">v1.7.1</span></h1>
     <div id="layout">
     <!-- Слева: сохранения и радио (радио открывается клавишей M) -->
     <aside id="leftPanel">
@@ -938,13 +1204,55 @@
         <button class="btn btn-secondary" onclick="importSave()">⬆️ Импорт</button>
         <button class="btn btn-danger" onclick="newGame()">🆕 Новая игра</button>
         <button class="btn btn-secondary radio-open-btn" onclick="radioPanelToggle()">📻 Радио (M)</button>
+        <button class="btn btn-secondary" onclick="openVideoFromMenu()">📺 Видео (V)</button>
         <button class="btn btn-secondary" onclick="openSettings()">⚙️ Настройки</button>
+    </div>
+
+    <!-- Маленький телевизор: открывается клавишей V (М) -->
+    <div id="videoPanel">
+        <div class="radio-head">
+            <span class="stat-label">Видео (V)</span>
+            <span>
+                <button class="radio-x" id="videoDetachBtn" onclick="videoDetachToggle()" title="Вынести телевизор поверх игры и увеличить" aria-label="Вынести телевизор">⛶</button>
+                <button class="radio-x" onclick="videoPanelToggle(false)" aria-label="Скрыть телевизор">✕</button>
+            </span>
+        </div>
+        <div class="tv">
+            <div class="tv-screen" id="videoScreen"></div>
+            <div class="tv-off" id="videoOff">▶</div>
+            <div class="tv-knobs"><span></span><span></span></div>
+        </div>
+        <div id="videoTitleNow" class="video-title">Видео нет</div>
+        <div id="videoNote" class="radio-note">Добавь ссылку в «Мои видео»</div>
+        <div class="radio-buttons">
+            <button class="btn btn-secondary" onclick="videoSwitch(-1)" aria-label="Предыдущее видео">◀</button>
+            <button class="btn" id="videoToggle" onclick="videoToggle()">▶ Вкл</button>
+            <button class="btn btn-secondary" onclick="videoSwitch(1)" aria-label="Следующее видео">▶</button>
+        </div>
+        <details class="radio-manage">
+            <summary>Мои видео</summary>
+            <ul id="videoList" class="radio-list"></ul>
+            <input type="text" id="videoTitle" placeholder="Название (необязательно)" maxlength="40" autocomplete="off">
+            <input type="url" id="videoUrl" placeholder="https://… ссылка на видео" maxlength="500" autocomplete="off">
+            <button class="btn btn-small" onclick="videoAddFromForm()">Добавить</button>
+            <div id="videoFormMsg" class="radio-note"></div>
+            <div class="radio-note">Подходят ссылки YouTube, RuTube, VK Видео и прямые ссылки на файлы .mp4 и .webm. Некоторые видео их авторы запрещают показывать на других сайтах — тогда в окне будет сообщение площадки.</div>
+        </details>
+        <div class="radio-note">Подключается к площадке только когда включено. ⛶ — вынести телевизор поверх игры и сделать крупнее (угол справа внизу тянется).</div>
     </div>
 
     <div id="radioPanel">
         <div class="radio-head">
             <span class="stat-label">Радио (M)</span>
             <button class="radio-x" onclick="radioPanelToggle(false)" aria-label="Скрыть радио">✕</button>
+        </div>
+        <!-- эскиз «граммофон» (включается в настройках); пластинка крутится, пока играет -->
+        <div class="gramophone" aria-hidden="true">
+            <div class="gr-horn"></div>
+            <div class="gr-bell"></div>
+            <div class="gr-arm"></div>
+            <div class="gr-record"><div class="gr-label"></div></div>
+            <div class="gr-box"><div class="gr-crank"></div></div>
         </div>
         <div id="radioStation">Станций нет</div>
         <div id="radioStatus">добавь станцию в «Мои станции»</div>
@@ -1040,6 +1348,7 @@
         <p><span class="key">C</span> (<span class="key">С</span>) - Клеть: платный подъём наверх</p>
         <p><span class="key">H</span> (<span class="key">Р</span>) - Лечиться: бинт или аптечка</p>
         <p><span class="key">M</span> (<span class="key">Ь</span>) - Радио: показать или скрыть панель (станции добавляешь сам)</p>
+        <p><span class="key">V</span> (<span class="key">М</span>) - Видео: маленький телевизор (YouTube, RuTube, VK, .mp4)</p>
         <p><span class="key">ESC</span> - Меню сохранений</p>
         <p>⚙️ «Настройки» на панели сохранений: где показывать уведомления, поменять панели местами</p>
         <p id="debugHelp" style="display: none;"><span class="key">`</span> (<span class="key">Ё</span>) - Режим отладки</p>
@@ -1182,6 +1491,20 @@
                 <button class="btn btn-small btn-secondary" onclick="showNotification('🔔 Так будут выглядеть уведомления')">Показать пример</button>
             </div>
             <div class="setting">
+                <div class="setting-label">Вид радио</div>
+                <div class="setting-options two" id="radioSkinOptions">
+                    <button class="btn btn-secondary" data-skin="plain" onclick="setRadioSkin('plain')">Простой</button>
+                    <button class="btn btn-secondary" data-skin="gramophone" onclick="setRadioSkin('gramophone')">🎺 Граммофон</button>
+                </div>
+            </div>
+            <div class="setting">
+                <div class="setting-label">Вид видео</div>
+                <div class="setting-options two" id="videoSkinOptions">
+                    <button class="btn btn-secondary" data-skin="plain" onclick="setVideoSkin('plain')">Простой</button>
+                    <button class="btn btn-secondary" data-skin="tv" onclick="setVideoSkin('tv')">📺 Телевизор</button>
+                </div>
+            </div>
+            <div class="setting">
                 <label class="setting-check">
                     <input type="checkbox" id="swapPanels" onchange="setSwapPanels(this.checked)">
                     Поменять панели местами: статистика — слева, сохранения, радио и настройки — справа
@@ -1260,7 +1583,7 @@
             if (typeof updateCamera === 'function' && world.length) updateCamera();
         }
         const SAVE_VERSION = 7;          // 2: размеры мира; 3: рюкзак и деньги; 4: кирка; 5: лопата; 6: лестницы и верёвки; 7: лампы, пояс
-        const GAME_VERSION = '1.7.0';
+        const GAME_VERSION = '1.7.1';
         const AUTOSAVE_INTERVAL = 30000; // 30 секунд
 
         // Физика игрока. Скорости — в блоках в секунду, ускорения — в блоках/с².
@@ -4444,13 +4767,18 @@
         // ---- Настройки игрока (хранятся в браузере, не в сохранениях) ----
         const SETTINGS_KEY = 'miner_settings';
         const NOTIFY_POSITIONS = ['top-right', 'top-left', 'top-center', 'bottom-right', 'bottom-left', 'bottom-center'];
-        const settings = { notify: 'top-right', swap: false };
+        // вид радио и видео по умолчанию простой: граммофон и телевизор игрок включает сам
+        const settings = { notify: 'top-right', swap: false, radioSkin: 'plain', videoSkin: 'plain' };
+        const RADIO_SKINS = ['plain', 'gramophone'];
+        const VIDEO_SKINS = ['plain', 'tv'];
 
         function loadSettings() {
             try {
                 const st = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
                 if (NOTIFY_POSITIONS.includes(st.notify)) settings.notify = st.notify;
                 settings.swap = st.swap === true;
+                if (RADIO_SKINS.includes(st.radioSkin)) settings.radioSkin = st.radioSkin;
+                if (VIDEO_SKINS.includes(st.videoSkin)) settings.videoSkin = st.videoSkin;
             } catch (e) { /* испорченные настройки — по умолчанию */ }
         }
 
@@ -4459,12 +4787,20 @@
         }
 
         function applySettings() {
-            if (document.body && document.body.classList) document.body.classList.toggle('swap-panels', settings.swap);
+            if (document.body && document.body.classList) {
+                document.body.classList.toggle('swap-panels', settings.swap);
+                document.body.classList.toggle('radio-gramophone', settings.radioSkin === 'gramophone');
+                document.body.classList.toggle('video-plain', settings.videoSkin === 'plain');
+            }
             const box = document.getElementById('swapPanels');
             if (box) box.checked = settings.swap;
             if (document.querySelectorAll) {
                 document.querySelectorAll('#notifyOptions [data-notify]').forEach(b =>
                     b.classList.toggle('chosen', b.dataset.notify === settings.notify));
+                document.querySelectorAll('#radioSkinOptions [data-skin]').forEach(b =>
+                    b.classList.toggle('chosen', b.dataset.skin === settings.radioSkin));
+                document.querySelectorAll('#videoSkinOptions [data-skin]').forEach(b =>
+                    b.classList.toggle('chosen', b.dataset.skin === settings.videoSkin));
             }
             restackNotifications();
         }
@@ -4475,6 +4811,16 @@
             saveSettings();
             applySettings();
             return true;
+        }
+
+        function setRadioSkin(skin) {
+            if (!RADIO_SKINS.includes(skin)) return false;
+            settings.radioSkin = skin; saveSettings(); applySettings(); return true;
+        }
+
+        function setVideoSkin(skin) {
+            if (!VIDEO_SKINS.includes(skin)) return false;
+            settings.videoSkin = skin; saveSettings(); applySettings(); return true;
         }
 
         function setSwapPanels(on) {
@@ -4697,6 +5043,8 @@
             st.textContent = radio.stations.length ? text : 'добавь станцию в «Мои станции»';
             st.classList.toggle('live', status === 'live');
             st.classList.toggle('error', status === 'error');
+            const panel = document.getElementById('radioPanel');
+            if (panel && panel.classList) panel.classList.toggle('playing', status === 'live' && radio.on);
             const cur = radioCurrent();
             document.getElementById('radioStation').textContent = cur ? cur.name : 'Станций нет';
             document.getElementById('radioToggle').textContent = radio.on ? '■ Выкл' : '▶ Вкл';
@@ -4802,10 +5150,245 @@
         radioSetStatus('off');
         document.getElementById('radioVolume').value = Math.round(radio.volume * 100);
 
+        // ============ ВИДЕО (маленький телевизор) ============
+        // YouTube, RuTube, VK Видео и прямые ссылки на .mp4/.webm. Пока телевизор не включён,
+        // игра к этим площадкам не обращается: плеер создаётся только по «Вкл» и удаляется по «Выкл».
+        const VIDEO_PREFS_KEY = 'miner_video';
+        const VIDEO_MAX = 30;
+        const video = { items: [], index: 0, on: false };
+
+        // Разобрать ссылку: { kind, embed, label } или null
+        function parseVideoUrl(raw) {
+            let u;
+            try { u = new URL(String(raw || '').trim()); } catch (e) { return null; }
+            if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+            const host = u.hostname.replace(/^(www\.|m\.)/, '');
+            const yt = id => /^[\w-]{11}$/.test(id || '') ? { kind: 'youtube', label: 'YouTube',
+                embed: `https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1` } : null;
+            if (host === 'youtu.be') return yt(u.pathname.slice(1).split('/')[0]);
+            if (host === 'youtube.com' || host === 'youtube-nocookie.com' || host === 'music.youtube.com') {
+                if (u.pathname === '/watch') return yt(u.searchParams.get('v'));
+                const m = u.pathname.match(/^\/(?:embed|shorts|live|v)\/([\w-]{11})/);
+                return m ? yt(m[1]) : null;
+            }
+            if (host === 'rutube.ru') {
+                const m = u.pathname.match(/^\/(?:video|shorts|play\/embed|video\/private)\/([0-9a-f]{32})/i);
+                if (!m) return null;
+                const p = u.searchParams.get('p');
+                return { kind: 'rutube', label: 'RuTube', embed: `https://rutube.ru/play/embed/${m[1]}${p ? `?p=${encodeURIComponent(p)}` : ''}` };
+            }
+            if (host === 'vk.com' || host === 'vkvideo.ru' || host === 'vk.ru') {
+                const src = u.pathname + ' ' + (u.searchParams.get('z') || '');
+                const m = src.match(/video(-?\d+)_(\d+)/);
+                if (m) return { kind: 'vk', label: 'VK Видео', embed: `https://vk.com/video_ext.php?oid=${m[1]}&id=${m[2]}&hd=2&autoplay=1` };
+                if (u.pathname === '/video_ext.php' && u.searchParams.get('oid') && u.searchParams.get('id')) {
+                    return { kind: 'vk', label: 'VK Видео', embed: u.href };
+                }
+                return null;
+            }
+            if (/\.(mp4|webm|ogv|ogg|m4v)$/i.test(u.pathname)) return { kind: 'file', label: 'Видеофайл', embed: u.href };
+            return null;
+        }
+
+        function videoLoadPrefs() {
+            try {
+                const p = JSON.parse(localStorage.getItem(VIDEO_PREFS_KEY) || '{}');
+                if (Array.isArray(p.items)) {
+                    video.items = p.items.filter(v => v && typeof v.url === 'string' && typeof v.title === 'string' && parseVideoUrl(v.url))
+                        .slice(0, VIDEO_MAX).map(v => ({ title: v.title.slice(0, 40), url: v.url }));
+                }
+                if (Number.isInteger(p.index) && p.index >= 0 && p.index < video.items.length) video.index = p.index;
+            } catch (e) { /* испорченные настройки — пусто */ }
+        }
+
+        function videoSavePrefs() {
+            safeSetItem(VIDEO_PREFS_KEY, JSON.stringify({ items: video.items, index: video.index }));
+        }
+
+        function videoCurrent() { return video.items[video.index] || null; }
+
+        function videoAdd(title, url) {
+            url = String(url || '').trim();
+            title = String(title || '').trim();
+            const parsed = parseVideoUrl(url);
+            if (!parsed) return 'ссылка не распознана: нужна ссылка на YouTube, RuTube, VK Видео или файл .mp4';
+            if (video.items.some(v => v.url === url)) return 'это видео уже есть';
+            if (video.items.length >= VIDEO_MAX) return `не больше ${VIDEO_MAX} видео`;
+            video.items.push({ title: (title || `${parsed.label} ${video.items.length + 1}`).slice(0, 40), url });
+            if (video.items.length === 1) video.index = 0;
+            videoSavePrefs();
+            videoRender();
+            return null;
+        }
+
+        function videoRemove(i) {
+            if (i < 0 || i >= video.items.length) return false;
+            if (video.on && i === video.index) videoStop();
+            video.items.splice(i, 1);
+            if (video.index >= video.items.length) video.index = Math.max(0, video.items.length - 1);
+            else if (i < video.index) video.index--;
+            videoSavePrefs();
+            videoRender();
+            return true;
+        }
+
+        function videoSelect(i) {
+            if (i < 0 || i >= video.items.length) return;
+            video.index = i;
+            videoSavePrefs();
+            if (video.on) videoPlay(); else videoRender();
+        }
+
+        function videoSwitch(step) {
+            if (!video.items.length) return;
+            videoSelect((video.index + step + video.items.length) % video.items.length);
+        }
+
+        function videoAddFromForm() {
+            const t = document.getElementById('videoTitle'), u = document.getElementById('videoUrl');
+            const err = videoAdd(t.value, u.value);
+            const msg = document.getElementById('videoFormMsg');
+            if (err) { msg.textContent = `Не добавлено: ${err}`; msg.className = 'radio-note error'; return false; }
+            msg.textContent = 'Видео добавлено';
+            msg.className = 'radio-note';
+            t.value = ''; u.value = '';
+            return true;
+        }
+
+        // Включить: создать плеер в «кинескопе»
+        function videoPlay() {
+            const cur = videoCurrent();
+            if (!cur) { showNotification('📺 Сначала добавь видео в «Мои видео»'); return false; }
+            const parsed = parseVideoUrl(cur.url);
+            const screen = document.getElementById('videoScreen');
+            screen.innerHTML = '';
+            let el;
+            if (parsed.kind === 'file') {
+                el = document.createElement('video');
+                el.src = parsed.embed;
+                el.controls = true;
+                el.autoplay = true;
+                el.playsInline = true;
+            } else {
+                el = document.createElement('iframe');
+                el.src = parsed.embed;
+                el.title = cur.title;
+                el.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+                el.allowFullscreen = true;
+                // YouTube не показывает видео без адреса страницы — отдаём только адрес сайта
+                el.referrerPolicy = 'strict-origin-when-cross-origin';
+            }
+            el.className = 'video-player';
+            screen.appendChild(el);
+            video.on = true;
+            videoRender();
+            return true;
+        }
+
+        // Выключить: плеер удаляется целиком — видео останавливается, соединение закрывается
+        function videoStop() {
+            const screen = document.getElementById('videoScreen');
+            screen.innerHTML = '';
+            video.on = false;
+            videoRender();
+        }
+
+        function videoToggle() {
+            if (video.on) videoStop(); else videoPlay();
+            return video.on;
+        }
+
+        // Показать/скрыть телевизор (клавиша V / М). Скрытый — выключается.
+        function videoPanelToggle(open) {
+            const panel = document.getElementById('videoPanel');
+            const show = open === undefined ? !panel.classList.contains('open') : open;
+            panel.classList.toggle('open', show);
+            if (!show && video.on) videoStop();
+            return show;
+        }
+
+        // Вынести телевизор поверх игры (крупнее) и вернуть обратно. Плеер при этом не
+        // пересоздаётся — видео не прерывается.
+        function videoDetachToggle(on) {
+            const panel = document.getElementById('videoPanel');
+            const detach = on === undefined ? !panel.classList.contains('detached') : on;
+            panel.classList.toggle('detached', detach);
+            if (detach) {
+                panel.style.left = Math.max(8, (typeof innerWidth === 'number' ? innerWidth : 1000) - 680) + 'px';
+                panel.style.top = '70px';
+            } else {
+                panel.style.left = panel.style.top = panel.style.width = panel.style.height = '';
+            }
+            const btn = document.getElementById('videoDetachBtn');
+            if (btn) { btn.textContent = detach ? '⤓' : '⛶'; btn.title = detach ? 'Вернуть телевизор на панель' : 'Вынести телевизор поверх игры и увеличить'; }
+            return detach;
+        }
+
+        // Перетаскивание вынесенного телевизора за заголовок
+        (function enableVideoDrag() {
+            const panel = document.getElementById('videoPanel');
+            const head = panel && panel.querySelector ? panel.querySelector('.radio-head') : null;
+            if (!head || typeof head.addEventListener !== 'function') return;
+            let drag = null;
+            head.addEventListener('pointerdown', e => {
+                if (!panel.classList.contains('detached') || e.target.closest && e.target.closest('button')) return;
+                drag = { dx: e.clientX - panel.offsetLeft, dy: e.clientY - panel.offsetTop };
+                try { head.setPointerCapture(e.pointerId); } catch (err) { /* не критично */ }
+            });
+            head.addEventListener('pointermove', e => {
+                if (!drag) return;
+                panel.style.left = Math.max(0, Math.min(innerWidth - 80, e.clientX - drag.dx)) + 'px';
+                panel.style.top = Math.max(0, Math.min(innerHeight - 40, e.clientY - drag.dy)) + 'px';
+            });
+            const stop = () => { drag = null; };
+            head.addEventListener('pointerup', stop);
+            head.addEventListener('pointercancel', stop);
+        })();
+
+        // На телефоне кнопка «Видео» — в меню ☰: закрываем меню и открываем телевизор
+        function openVideoFromMenu() {
+            if (document.body.classList && document.body.classList.contains('menu-open')) toggleMenu(false);
+            videoPanelToggle(true);
+        }
+
+        function videoRender() {
+            const cur = videoCurrent();
+            document.getElementById('videoTitleNow').textContent = cur ? cur.title : 'Видео нет';
+            document.getElementById('videoToggle').textContent = video.on ? '■ Выкл' : '▶ Вкл';
+            const off = document.getElementById('videoOff');
+            if (off) off.style.display = video.on ? 'none' : '';
+            const note = document.getElementById('videoNote');
+            const fromFile = typeof location !== 'undefined' && location.protocol === 'file:';
+            note.textContent = !cur ? 'Добавь ссылку в «Мои видео»'
+                : (fromFile && parseVideoUrl(cur.url).kind === 'youtube')
+                    ? 'YouTube из файла на компьютере часто не показывает видео — на сайте игры работает'
+                    : parseVideoUrl(cur.url).label;
+            const list = document.getElementById('videoList');
+            if (!list || typeof list.appendChild !== 'function') return;
+            list.innerHTML = '';
+            if (!video.items.length) {
+                const li = document.createElement('li');
+                li.className = 'radio-empty';
+                li.textContent = 'Пока пусто — добавь ссылку ниже';
+                list.appendChild(li);
+                return;
+            }
+            video.items.forEach((v, i) => {
+                const li = document.createElement('li');
+                li.className = i === video.index ? 'current' : '';
+                li.innerHTML = `<button class="radio-pick" onclick="videoSelect(${i})" title="${escapeHtml(v.url)}">${i === video.index ? '▶ ' : ''}${escapeHtml(v.title)}</button>
+                    <button class="radio-del" onclick="videoRemove(${i})" aria-label="Удалить видео">✕</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        videoLoadPrefs();
+        videoRender();
+
         // Обработка клавиатуры (сенсорные кнопки зовут те же функции)
         // Клавиши-действия срабатывают один раз на нажатие: автоповтор при удержании
         // не должен, например, тратить бинты один за другим
-        const ONE_SHOT_KEYS = new Set(['KeyE', 'KeyQ', 'KeyR', 'KeyT', 'KeyC', 'KeyH', 'KeyM', 'Backquote', 'KeyG', 'Escape']);
+        const ONE_SHOT_KEYS = new Set(['KeyE', 'KeyQ', 'KeyR', 'KeyT', 'KeyC', 'KeyH', 'KeyM', 'KeyV', 'Backquote', 'KeyG', 'Escape']);
 
         function onKeyDown(e) {
             // набор текста в полях (название станции, адрес, имя сохранения) — не управление
@@ -4832,6 +5415,7 @@
             if (e.code === 'KeyC' && !gameState.paused) openCage();
             if (e.code === 'KeyH' && !gameState.paused) heal();
             if (e.code === 'KeyM' && !gameState.paused) radioPanelToggle();
+            if (e.code === 'KeyV' && !gameState.paused) videoPanelToggle();
 
             if (e.code === 'Escape') {
                 e.preventDefault();
