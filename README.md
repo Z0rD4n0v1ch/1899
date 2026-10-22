@@ -1,20 +1,22 @@
-# Сайт игры Miner 1899
+# Сайт «Шахтёр 1899»
 
 Страница игры и сама игра. Код игры — в репозитории [miner-1899](https://github.com/Z0rD4n0v1ch/miner-1899).
 Публикуется на GitHub Pages:
-**https://z0rd4n0v1ch.github.io/1899/**
+**https://z0rd4n0v1ch.github.io/m1899/**
 
 ## Что где лежит
 
 ```
-1899.github.io/
+m1899/
 ├── index.html                 # страница игры
 ├── play/index.html            # сама игра (копия miner-1899.html)
 ├── img/                       # скриншоты для страницы (WebP)
 │   ├── overview.webp
 │   ├── biomes.webp
 │   ├── creatures.webp
-│   └── mobile.webp
+│   ├── mobile.webp
+│   ├── character.webp
+│   └── goal.webp
 ├── assets/
 │   ├── logo.webp              # логотип 600 px, 129 КБ — его показывают браузеры
 │   ├── logo.png               # запасной логотип для старых браузеров
